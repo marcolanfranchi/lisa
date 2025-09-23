@@ -6,25 +6,20 @@ A machine learning pipeline for classifying a speaker from their voice.
 
 ## Project Structure
 
-<!-- ```
-genre-classification/
+```
+speaker-recognition/
 │
-├── data/                   # Dataset lives here (GTZAN)
-│ └── gtzan/
-│   └── genres/             # 10 genre folders with .wav files
+├── data/                       # Data
+│ └── generated/                # Generated dataset of voice recordings
+│ └── recording-prompts.json    # Voice recording instructions
 │
-├── notebooks/              # Jupyter notebooks for EDA and experiments
-│
-├── scripts/                # Utility scripts
-│
-├── src/                    # Source code
-│ └── 0-get-data.py         # Downloads GTZAN dataset into data/gtzan
-│ └── 1-extract-features.py # Extracts features from the GTZAN dataset
+├── src/                        # Source code
+│ └── 0-get-data.py             # Starts the data generation process
 │
 ├── README.md
 ├── requirements.txt
 └── .gitignore
-``` -->
+```
 
 ## Getting Started
 
@@ -48,9 +43,10 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-<!-- ### 4. Download the dataset
+### 4. Generate your dataset 
+This step needs to be done for 3-5 people to get a final dataset of multiple voices.
 
 ```bash
-python3 scripts/download_data.py
+python3 src/0-get-data.py
 ```
-This will place the dataset into `data/gtzan/genres/`. -->
+This will place the dataset into `data/generated/`.
