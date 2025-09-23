@@ -1,8 +1,6 @@
 # speaker-recognition
 
-A machine learning pipeline for classifying a speaker from their voice.
-
----
+A machine learning pipeline that classifies a speaker by their voice.
 
 ## Project Structure
 
