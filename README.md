@@ -47,4 +47,10 @@ This step needs to be done for 3-5 people to get a final dataset of multiple voi
 ```bash
 python3 src/0-get-data.py
 ```
-This will place the dataset into `data/generated/`.
+What this script does:
+- Prompts the user with recording instructions loaded from a JSON file.
+- Records 60-second audio sessions with countdown and progress bar feedback.
+- Splits each recording into overlapping 1.5s clips (50% overlap), trims silence, and discards too-short segments (max 79 segments per 1 min recording).
+- Saves processed clips with unique IDs in a structured folder (processed_clips/speaker_id/).
+- Generates a manifest CSV containing metadata (clip paths, speaker ID, script ID, timestamps).
+- Entire generated dataset gets placed into `data/generated/`.

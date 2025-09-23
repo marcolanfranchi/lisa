@@ -126,7 +126,7 @@ def main():
         clips = split_audio(out_file, speaker_id, script["id"])
         all_clips.extend(clips)
 
-    # save manifest
+    # save manifest (TODO: maybe send to S3 instead so all members can push/access)
     df = pd.DataFrame(all_clips)
     MANIFEST_FILE.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(MANIFEST_FILE, index=False)
