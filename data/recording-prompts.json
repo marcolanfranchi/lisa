@@ -1,0 +1,62 @@
+[
+  {
+    "id": "A",
+    "title": "Phonetically-rich paragraph",
+    "reason": "Contains diverse phonemes and varied prosody; good for baseline controlled read speech.",
+    "instruction": "Read this paragraph naturally in a steady voice, aiming for about one minute.",
+    "content": "The quick brown fox jumped easily over the lazy dog and then paused to listen. Small children played on the streets while a bicycle bell chimed. Across the market, vendors shouted offers of fresh fruit and coffee, and an old man in a blue jacket whistled an unfamiliar tune. She carried a worn leather satchel filled with letters, a brass key, and a folded map that hinted at distant places she had yet to see. Please tell me where the road leads next."
+  },
+  {
+    "id": "B",
+    "title": "Harvard-style short sentences",
+    "reason": "Covers a wide range of phonemes and natural sentence boundaries; ensures phonetic variety.",
+    "instruction": "Read each sentence clearly and naturally with short pauses between them.",
+    "content": [
+      "The sky above the port was the color of television, tuned to a dead channel.",
+      "A large, dark field of wheat rolled down the hill in waves.",
+      "The early bird may get the worm, but the second mouse gets the cheese.",
+      "A sudden gust made the papers fly across the lawn.",
+      "He opened the small wooden box and found nothing but a single key.",
+      "The museum closes at six, but tonight there’s a late concert.",
+      "She wore a hat with a bright red feather stuck in the brim.",
+      "The children chased the kite until it snapped and drifted away.",
+      "A cup of coffee can change a slow morning into a busy one.",
+      "They decided to meet at the old bridge at noon."
+    ]
+  },
+  {
+    "id": "C",
+    "title": "Numbers, addresses, structured phrases",
+    "reason": "Captures digits, alphanumerics, dates, and formal phrases — useful for modeling precise articulation.",
+    "instruction": "Read the items clearly in one continuous take with small pauses between them.",
+    "content": [
+      "Phone number: six one seven — five five five — zero one two three.",
+      "Dates: January twenty-first, nineteen ninety-seven; August third, two thousand five.",
+      "Time: seven thirty a.m., nine fifteen p.m., midnight.",
+      "Address: 482 Willow Street, Apartment 3B, Springfield.",
+      "Code sample: A7B-3C9, license plate ZQK-482, tracking number 1Z9999W99999999999.",
+      "Bank-style: transfer two hundred and fifty dollars to account ending nine eight seven six."
+    ]
+  },
+  {
+    "id": "D",
+    "title": "Ad-lib prompts",
+    "reason": "Encourages spontaneous speech with natural prosody, fillers, and variable intonation.",
+    "instruction": "Do not read these prompts. Instead, answer each prompt aloud in your own words for 8–12 seconds.",
+    "content": [
+      "Describe your favorite meal — what is it, how it’s made, and why you like it.",
+      "Tell a short story about a memorable trip or day out.",
+      "Explain how to make a peanut butter and jelly sandwich step by step.",
+      "Describe a movie or book you love and why others should see or read it.",
+      "Talk about a recent funny or awkward moment that happened to you.",
+      "Describe your daily commute — sights, sounds, and what you think about."
+    ]
+  },
+  {
+    "id": "E",
+    "title": "Prosody variation (same paragraph, different styles)",
+    "reason": "Captures the same lexical content under different emotional tones; improves robustness to expressive variation.",
+    "instruction": "Read the following paragraph three times: once neutral, once happy/energetic, and once tired/slow.",
+    "content": "On a rainy morning she stood by the window and watched the droplets race each other down the glass. The city hummed quietly, and somewhere a distant bus wheezed past. She sipped her coffee slowly as if trying to remember the last time she had felt completely unhurried."
+  }
+]

@@ -16,10 +16,10 @@ import time
 SAMPLE_RATE = 16000
 CLIP_LEN = 1.5   # seconds
 STEP = 0.75      # seconds (50% overlap)
-RAW_DIR = Path("data/raw_recordings")
-PROC_DIR = Path("data/processed_clips")
-PROMPTS_FILE = Path("data/recording-prompts.json")
-MANIFEST_FILE = Path("data/manifest.csv")
+RAW_DIR = Path("data/generated/raw_recordings")
+PROC_DIR = Path("data/generated/processed_clips")
+PROMPTS_FILE = Path("data/generated/recording-prompts.json")
+MANIFEST_FILE = Path("data/generated/manifest.csv")
 # ----------------------------------------
 
 # setup console and logging
