@@ -3,3 +3,4 @@ venv/
 data/generated/
 __pycache__/
 *.log
+.DS_Store
