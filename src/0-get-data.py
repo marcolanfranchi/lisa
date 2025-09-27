@@ -1,47 +1,34 @@
 # 0-get-data.py
 import json
-import uuid
-import logging
-from pathlib import Path
 import sounddevice as sd
 import soundfile as sf
-import librosa
-import pandas as pd
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.progress import Progress
 import time
+from config import PROMPTS_FILE, RAW_RECORDINGS_DIR, MANIFEST_FILE
 
 # ---------------- CONFIG ----------------
 SAMPLE_RATE = 16000
-CLIP_LEN = 1.5   # seconds
-STEP = 0.75      # seconds (50% overlap)
-RAW_DIR = Path("data/generated/raw_recordings")
-PROC_DIR = Path("data/generated/processed_clips")
-PROMPTS_FILE = Path("data/recording-prompts.json")
-MANIFEST_FILE = Path("data/generated/manifest.csv")
+RECORDING_DURATION = 60  # Time given to read each prompt (in seconds)
+COUNTDOWN_DURATION = 10  # Time given to get ready before recording starts (in seconds)
 # ----------------------------------------
 
-# setup console and logging
+# setup console
 console = Console()
-logging.basicConfig(
-    filename="recording.log",
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s"
-)
-
-
-def countdown(seconds, message):
-    """show a countdown with progress bar"""
-    with Progress(console=console, transient=True) as progress:
-        task = progress.add_task(f"[cyan]{message}", total=seconds)
-        for _ in range(seconds):
-            time.sleep(1)
-            progress.update(task, advance=1)
 
 
 def record_with_progress(duration, filename):
-    """record audio with progress bar feedback"""
+    """ 
+    Record audio with progress bar feedback.
+
+    Args:
+        duration: int, recording duration in seconds
+        filename: str, path to save the recording
+    
+    Returns:
+        saves the recording to the specified filename
+    """
     with Progress(console=console, transient=True) as progress:
         task = progress.add_task("[cyan]recording...", total=duration)
         audio = sd.rec(int(duration * SAMPLE_RATE), samplerate=SAMPLE_RATE, channels=1)
@@ -50,61 +37,43 @@ def record_with_progress(duration, filename):
             progress.update(task, advance=1)
         sd.wait()
     sf.write(filename, audio, SAMPLE_RATE)
-    logging.info(f"saved recording: {filename}")
-
-
-def split_audio(file_path, speaker_id, script_id):
-    """split raw audio into overlapping clips and save them"""
-    y, sr = librosa.load(file_path, sr=SAMPLE_RATE)
-    clip_len = int(CLIP_LEN * sr)
-    step = int(STEP * sr)
-
-    clips = []
-    for start in range(0, len(y) - clip_len, step):
-        end = start + clip_len
-        clip = y[start:end]
-
-        # trim silence
-        clip, _ = librosa.effects.trim(clip, top_db=25)
-        if len(clip) < sr * 0.4:  # discard if too short
-            continue
-
-        clip_id = str(uuid.uuid4())[:8]
-        out_name = f"{script_id}_{clip_id}.wav"
-        out_path = PROC_DIR / speaker_id / out_name
-        out_path.parent.mkdir(parents=True, exist_ok=True)
-
-        sf.write(out_path, clip, sr)
-        clips.append({
-            "clip_path": str(out_path),
-            "speaker_id": speaker_id,
-            "script_id": script_id,
-            "source_file": str(file_path),
-            "start_time": start / sr,
-            "end_time": end / sr
-        })
-
-    return clips
 
 
 def main():
-    # load prompts
+    """
+    Main script to handle the recording process.
+
+    Args:
+        none
+
+    Returns:
+        saves raw recordings and updates manifest file
+    
+    Pipeline Step:
+        1/7
+
+    Expects:
+        nothing, starts fresh recording session and saves data for next steps
+    """
+
+    # load read-out-loud prompts
     with open(PROMPTS_FILE) as f:
         prompts = json.load(f)
 
-    speaker_id = Prompt.ask("enter your name (e.g. marco)")
+    # get speaker ID (first name)
+    speaker_id = Prompt.ask("enter your name (e.g. john)").strip().lower().replace(" ", "_")
 
-    session_dir = RAW_DIR / speaker_id
+    # create directory for speaker
+    session_dir = RAW_RECORDINGS_DIR / speaker_id
     session_dir.mkdir(parents=True, exist_ok=True)
 
-    all_clips = []
-
+    # iterate over 'read-out-loud' prompts and record
     for script in prompts:
         console.rule(f"[bold green]{script['title']}[/bold green]")
-        # console.print(f"[yellow]reason:[/yellow] {script['reason']}")
         console.print(f"[yellow]instruction:[/yellow] {script['instruction']}")
         console.rule()
 
+        # display script content (handle list or str)
         if isinstance(script["content"], list):
             for line in script["content"]:
                 console.print(f"- {line}")
@@ -112,25 +81,20 @@ def main():
             console.print(script["content"])
 
         console.rule()
-        # audio recording duration to 60 seconds
-        duration = 60
+
+        # prepare file path for raw recording output
         out_file = session_dir / f"{script['id']}.wav"
 
-        console.print(f"[cyan]recording will start in 5 seconds... get ready[/cyan]")
-        time.sleep(5)
+        console.print(f"[cyan]recording will start in {COUNTDOWN_DURATION} seconds... get ready[/cyan]")
+        time.sleep(COUNTDOWN_DURATION)
 
-        record_with_progress(duration, out_file)
+        # record audio with progress bar
+        record_with_progress(RECORDING_DURATION, out_file)
+        console.print(f"[bold green]recording saved: {out_file}[/bold green]")
 
-        # split into clips
-        console.print(f"[magenta]splitting {out_file} into clips...[/magenta]")
-        clips = split_audio(out_file, speaker_id, script["id"])
-        all_clips.extend(clips)
-
-    # save manifest (TODO: maybe send to S3 instead so all members can push/access)
-    df = pd.DataFrame(all_clips)
-    MANIFEST_FILE.parent.mkdir(parents=True, exist_ok=True)
-    df.to_csv(MANIFEST_FILE, index=False)
-    console.print(f"[bold green]dataset ready.[/bold green] saved manifest: {MANIFEST_FILE}")
+    # once for-loop is done, show thank you message
+    console.rule("[bold green]all done! thank you for your recordings![/bold green]")
+    console.print(f"[bold green]{speaker_id}'s raw recordings ready at {session_dir}.[/bold green] saved manifest: {MANIFEST_FILE}")
 
 
 if __name__ == "__main__":
