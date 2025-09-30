@@ -50,7 +50,7 @@ def main():
         saves raw recordings and updates manifest file
     
     Pipeline Step:
-        1/7
+        0/5
 
     Expects:
         nothing, starts fresh recording session and saves data for next steps

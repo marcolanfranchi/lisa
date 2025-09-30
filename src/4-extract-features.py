@@ -295,7 +295,7 @@ def main():
         saves vocal feature matrix to CSV file
 
     Pipeline Step:
-        5/7
+        4/5
     
     Expects:
         balanced clips in BALANCED_CLIPS_DIR

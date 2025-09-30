@@ -84,7 +84,7 @@ def main():
         saves processed clips and a manifest file
 
     Pipeline Step:
-        3/7
+        2/5
     
     Expects:
         cleaned recordings in CLEANED_RECORDINGS_DIR

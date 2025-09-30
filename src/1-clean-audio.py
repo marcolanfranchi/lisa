@@ -62,7 +62,7 @@ def main():
         none
     
     Pipeline Step:
-        2/7
+        1/5
 
     Expects:
         raw recordings in RAW_RECORDINGS_DIR

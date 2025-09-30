@@ -191,7 +191,7 @@ def main():
         saves balanced clips and manifest file
 
     Pipeline Step:
-        4/7
+        3/5
     
     Expects:
         processed clips in PROCESSED_CLIPS_DIR
