@@ -1,7 +1,5 @@
 # config.py
-"""
-Contains all paths, and certain constants that are used across the project.
-"""
+# Contains all paths, and certain constants that are used across the project.
 
 from pathlib import Path
 
@@ -10,18 +8,20 @@ from pathlib import Path
 DATA_DIR = Path("data")
 GENERATED_DIR = DATA_DIR / "generated"
 
-# Audio Data
+# Input files
+PROMPTS_FILE = DATA_DIR / "recording-prompts.json"
+
+# Output Audio Data
 RAW_RECORDINGS_DIR = GENERATED_DIR / "raw_recordings"
 CLEANED_RECORDINGS_DIR = GENERATED_DIR / "cleaned_recordings" 
 PROCESSED_CLIPS_DIR = GENERATED_DIR / "processed_clips"
 BALANCED_CLIPS_DIR = GENERATED_DIR / "balanced_clips"
 
-# Input files
-PROMPTS_FILE = DATA_DIR / "recording-prompts.json"
-
 # Output files
 MANIFEST_FILE = GENERATED_DIR / "manifest.csv"
 BALANCED_MANIFEST_FILE = GENERATED_DIR / "balanced_manifest.csv"
+FEATURES_FILE = GENERATED_DIR / "vocal_features.csv"
+
 
 # ---------------- SPEAKER MANAGEMENT ----------------
 def get_speaker_paths(speaker_id):
