@@ -1,6 +1,6 @@
-# speaker-recognition
+# LISA (Labeled Identification of Speech Audio)
 
-A machine learning pipeline that classifies a speaker by their voice.
+An end-to-end machine learning pipeline that classifies a speaker by their voice.
 
 ## Overview
 
