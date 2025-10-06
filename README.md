@@ -2,7 +2,13 @@
 
 A machine learning pipeline that classifies a speaker by their voice.
 
-## Project Structure
+## Overview
+
+### System Diagram
+
+![System Diagram](images/diagramTransparentDarkBG.png)
+
+### Project Structure
 
 ```
 speaker-recognition/
