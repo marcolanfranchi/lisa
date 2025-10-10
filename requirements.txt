@@ -17,3 +17,5 @@ gradio==5.47.2
 transformers==4.56.2
 torch==2.8.0
 torchaudio==2.8.0
+yt-dlp==2025.9.26
+pyannote.audio==4.0.0
