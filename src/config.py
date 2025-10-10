@@ -19,6 +19,7 @@ BALANCED_CLIPS_DIR = GENERATED_DIR / "balanced_clips"
 
 # Output files
 MANIFEST_FILE = GENERATED_DIR / "manifest.csv"
+NEW_MANIFEST_FILE = GENERATED_DIR / "new_manifest.csv"
 BALANCED_MANIFEST_FILE = GENERATED_DIR / "balanced_manifest.csv"
 FEATURES_FILE = GENERATED_DIR / "vocal_features.csv"
 
