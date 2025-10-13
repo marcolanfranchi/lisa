@@ -1,4 +1,4 @@
-# LISA (Labeled Identification of Speech Audio)
+# L.I.S.A. (Labeled Identification of Speech Audio)
 
 An end-to-end machine learning pipeline that classifies a speaker by their voice.
 
