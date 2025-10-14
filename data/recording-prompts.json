@@ -4,7 +4,7 @@
     "title": "Phonetically-rich paragraph",
     "reason": "Contains diverse phonemes and varied prosody; good for baseline controlled read speech.",
     "instruction": "Read this paragraph naturally in a steady voice, aiming for about one minute.",
-    "content": "The quick brown fox jumped easily over the lazy dog and then paused to listen. Small children played on the streets while a bicycle bell chimed. Across the market, vendors shouted offers of fresh fruit and coffee, and an old man in a blue jacket whistled an unfamiliar tune. She carried a worn leather satchel filled with letters, a brass key, and a folded map that hinted at distant places she had yet to see. Please tell me where the road leads next."
+    "content": "The quick brown fox jumped easily over the lazy dog and then paused to listen. Small children played on the streets while a bicycle bell chimed. Across the market, vendors shouted offers of fresh fruit and coffee, and an old man in a blue jacket whistled an unfamiliar tune. She carried a worn leather satchel filled with letters, a brass key, and a folded map that hinted at distant places she had yet to see. The wind rustled through tall grass, carrying the scent of rain and distant pine trees. Somewhere in the distance, a train horn echoed softly, blending with the chatter of birds. A cat darted across the path, chasing a leaf that danced in circles before settling near the fence. Please tell me where the road leads next, for it seems to wind endlessly toward a horizon painted in gold and violet."
   },
   {
     "id": "B",
@@ -21,7 +21,11 @@
       "She wore a hat with a bright red feather stuck in the brim.",
       "The children chased the kite until it snapped and drifted away.",
       "A cup of coffee can change a slow morning into a busy one.",
-      "They decided to meet at the old bridge at noon."
+      "They decided to meet at the old bridge at noon.",
+      "The clock tower struck twelve times, and each sound lingered in the cool air.",
+      "He looked up at the stars, tracing imaginary lines between them like roads on a map.",
+      "A candle flickered in the window, casting long shadows across the empty room.",
+      "The quiet hum of the refrigerator was the only sound left in the kitchen."
     ]
   },
   {
@@ -30,12 +34,12 @@
     "reason": "Captures digits, alphanumerics, dates, and formal phrases — useful for modeling precise articulation.",
     "instruction": "Read the items clearly in one continuous take with small pauses between them.",
     "content": [
-      "Phone number: six one seven — five five five — zero one two three.",
-      "Dates: January twenty-first, nineteen ninety-seven; August third, two thousand five.",
-      "Time: seven thirty a.m., nine fifteen p.m., midnight.",
-      "Address: 482 Willow Street, Apartment 3B, Springfield.",
-      "Code sample: A7B-3C9, license plate ZQK-482, tracking number 1Z9999W99999999999.",
-      "Bank-style: transfer two hundred and fifty dollars to account ending nine eight seven six."
+      "Phone number: six one seven — five five five — zero one two three. Alternate contact: four zero two — eight eight eight — seven six one nine.",
+      "Dates: January twenty-first, nineteen ninety-seven; August third, two thousand five; October twelfth, twenty twenty-four.",
+      "Time: seven thirty a.m., nine fifteen p.m., midnight, and eleven forty-five in the morning.",
+      "Address: 482 Willow Street, Apartment 3B, Springfield; alternate location: 27 Maple Avenue, Building 2, Suite 9C.",
+      "Code sample: A7B-3C9, license plate ZQK-482, tracking number 1Z9999W99999999999, reference ID BRX-2048-Q9.",
+      "Bank-style: transfer two hundred and fifty dollars to account ending nine eight seven six. Verify routing number one one two zero zero zero four three."
     ]
   },
   {
@@ -43,35 +47,34 @@
     "title": "Prosody variation (same paragraph, different styles)",
     "reason": "Captures the same lexical content under different emotional tones; improves robustness to expressive variation.",
     "instruction": "Read the following paragraph three times: once neutral, once happy/energetic, and once tired/slow.",
-    "content": "On a rainy morning she stood by the window and watched the droplets race each other down the glass. The city hummed quietly, and somewhere a distant bus wheezed past. She sipped her coffee slowly as if trying to remember the last time she had felt completely unhurried."
+    "content": "On a rainy morning she stood by the window and watched the droplets race each other down the glass. The city hummed quietly, and somewhere a distant bus wheezed past. She sipped her coffee slowly as if trying to remember the last time she had felt completely unhurried. The smell of toast filled the air, mixing with the faint scent of wet pavement. A newspaper rustled on the table, untouched, while the sound of rain grew softer, steadier. She thought of places she’d once dreamed of visiting, of voices she hadn’t heard in years. The rain kept falling, each drop tracing a new path down the pane, as if writing stories she would never read."
   },
   {
     "id": "E1",
     "title": "Kazakh spontaneous paragraph",
     "reason": "Encourages natural Kazakh speech and local phoneme coverage for diverse accent modeling.",
     "instruction": "Read this paragraph naturally in Kazakh with your normal tone of voice.",
-    "content": "Күн жылы, аспан ашық, жел баяу соғып тұр. Ауылдың шетінде кішкентай өзеннің суы сыңғырлап ағып жатыр. Балалар далада күліп, доп ойнап жүр, иттер бір-бірімен жарысып үріп жатыр. Қарттар ағаш көлеңкесінде әңгіме айтып, шай ішіп отыр. Мен әжемнің пісірген бауырсағының иісін сезіп, үйге қарай асықтым. Ас үйден майдың шыжылы естіліп, терезеден бу көтеріліп тұр. Осы тыныш сәт менің балалық шағымды еске түсіреді. Таңғы тыныштық пен жылы күннің иісі бәрін бір сәтке тоқтатқандай. Осындай сәттерде өмірдің ең қарапайым сұлулығын сезінесің."
+    "content": "Күн жылы, аспан ашық, жел баяу соғып тұр. Ауылдың шетінде кішкентай өзеннің суы сыңғырлап ағып жатыр. Балалар далада күліп, доп ойнап жүр, иттер бір-бірімен жарысып үріп жатыр. Қарттар ағаш көлеңкесінде әңгіме айтып, шай ішіп отыр. Мен әжемнің пісірген бауырсағының иісін сезіп, үйге қарай асықтым. Ас үйден майдың шыжылы естіліп, терезеден бу көтеріліп тұр. Осы тыныш сәт менің балалық шағымды еске түсіреді. Таңғы тыныштық пен жылы күннің иісі бәрін бір сәтке тоқтатқандай. Осындай сәттерде өмірдің ең қарапайым сұлулығын сезінесің. Көрші үйдің есігінің алдында мысық күнге жылынып жатыр, ал аспанда ақ бұлттар баяу қалқып келеді. Алыстан трактордың үні естіледі, ауыл оянып, жаңа күнге дайындалып жатқандай."
   },
   {
     "id": "E2",
     "title": "French spontaneous paragraph",
     "reason": "Captures natural French rhythm, nasal vowels, and expressive prosody.",
     "instruction": "Read this paragraph naturally in French, as if telling a story to a friend.",
-    "content": "Ce matin, la pluie tombait doucement sur les toits de la ville. Les rues brillaient sous les lampadaires, et l’odeur du café chaud venait des boulangeries. Une femme pressée tenait un parapluie rouge, tandis qu’un vieux monsieur lisait son journal à la terrasse d’un café. Le tram passait lentement, sonnant à chaque arrêt, et les enfants marchaient main dans la main vers l’école. Tout semblait calme et familier, comme si le temps s’était arrêté un instant. J’ai observé les passants, les visages concentrés, les gestes ordinaires. Chaque matin ressemble à celui d’hier, mais il y a toujours un détail qui change, une lumière nouvelle, un sourire inattendu."
+    "content": "Ce matin, la pluie tombait doucement sur les toits de la ville. Les rues brillaient sous les lampadaires, et l’odeur du café chaud venait des boulangeries. Une femme pressée tenait un parapluie rouge, tandis qu’un vieux monsieur lisait son journal à la terrasse d’un café. Le tram passait lentement, sonnant à chaque arrêt, et les enfants marchaient main dans la main vers l’école. Tout semblait calme et familier, comme si le temps s’était arrêté un instant. J’ai observé les passants, les visages concentrés, les gestes ordinaires. Chaque matin ressemble à celui d’hier, mais il y a toujours un détail qui change, une lumière nouvelle, un sourire inattendu. Plus loin, un musicien jouait de l’accordéon sous un porche, et sa mélodie se mêlait au bruit de la pluie. La ville avait une douceur particulière, comme si elle respirait lentement après une longue nuit."
   },
   {
     "id": "E3",
     "title": "Ukrainian spontaneous paragraph",
     "reason": "Captures melodic intonation and soft consonants typical of Ukrainian speech.",
     "instruction": "Read this paragraph naturally in Ukrainian, keeping a calm and steady tone.",
-    "content": "Сонце повільно сходить над річкою, і туман розсіюється між деревами. На подвір’ї чути спів птахів, далеке гавкання собаки та дзвін відра біля колодязя. Мати кличе дітей до сніданку, а сусід виходить у сад поливати квіти. Повітря свіже, пахне травою і теплим хлібом, який тільки-но вийняли з печі. Я сідаю на лавку біля хати, дивлюся, як світ поступово прокидається. Десь за городом чути трактор, а на небі пролітає зграя журавлів. Усе здається простим, рідним і таким спокійним, ніби час тут плине повільніше, ніж будь-де."
+    "content": "Сонце повільно сходить над річкою, і туман розсіюється між деревами. На подвір’ї чути спів птахів, далеке гавкання собаки та дзвін відра біля колодязя. Мати кличе дітей до сніданку, а сусід виходить у сад поливати квіти. Повітря свіже, пахне травою і теплим хлібом, який тільки-но вийняли з печі. Я сідаю на лавку біля хати, дивлюся, як світ поступово прокидається. Десь за городом чути трактор, а на небі пролітає зграя журавлів. Усе здається простим, рідним і таким спокійним, ніби час тут плине повільніше, ніж будь-де. У вікні відбивається небо, і стара яблуня хитає гілками від легкого вітру. Здалеку чути, як дідусь вітає сусіда, починаючи звичайний сільський день."
   },
   {
     "id": "E4",
     "title": "Russian spontaneous paragraph",
     "reason": "Captures natural Russian articulation and emotional flow for spontaneous style modeling.",
     "instruction": "Read this paragraph naturally in Russian with a relaxed, conversational tone.",
-    "content": "Утро началось спокойно: за окном пели птицы, солнце мягко освещало комнату. На кухне пахло свежим хлебом и чаем с мятой. Издалека доносились шаги прохожих и редкие звуки машин. Я открыл окно, вдохнул прохладный воздух и услышал, как где-то во дворе кто-то смеётся. Всё вокруг казалось таким знакомым — старые деревья, звон колокольчика на двери соседнего магазина, гул города вдали. Иногда простое утро может быть началом самого лучшего дня, если просто остановиться и заметить мелочи. Я налил себе кофе, сел у окна и подумал: как же хорошо быть здесь, сейчас."
+    "content": "Утро началось спокойно: за окном пели птицы, солнце мягко освещало комнату. На кухне пахло свежим хлебом и чаем с мятой. Издалека доносились шаги прохожих и редкие звуки машин. Я открыл окно, вдохнул прохладный воздух и услышал, как где-то во дворе кто-то смеётся. Всё вокруг казалось таким знакомым — старые деревья, звон колокольчика на двери соседнего магазина, гул города вдали. Иногда простое утро может быть началом самого лучшего дня, если просто остановиться и заметить мелочи. Я налил себе кофе, сел у окна и подумал: как же хорошо быть здесь, сейчас. Лучи солнца ложились на пол полосами, а где-то вдалеке проехал автобус, оставив за собой лёгкий гул. Я улыбнулся, понимая, что счастье часто скрыто в таких простых мгновениях."
   }
-  
 ]
