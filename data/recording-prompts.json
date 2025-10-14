@@ -40,23 +40,38 @@
   },
   {
     "id": "D",
-    "title": "Ad-lib prompts",
-    "reason": "Encourages spontaneous speech with natural prosody, fillers, and variable intonation.",
-    "instruction": "Do not read these prompts. Instead, answer each prompt aloud in your own words for 8–12 seconds.",
-    "content": [
-      "Describe your favorite meal — what is it, how it’s made, and why you like it.",
-      "Tell a short story about a memorable trip or day out.",
-      "Explain how to make a peanut butter and jelly sandwich step by step.",
-      "Describe a movie or book you love and why others should see or read it.",
-      "Talk about a recent funny or awkward moment that happened to you.",
-      "Describe your daily commute — sights, sounds, and what you think about."
-    ]
-  },
-  {
-    "id": "E",
     "title": "Prosody variation (same paragraph, different styles)",
     "reason": "Captures the same lexical content under different emotional tones; improves robustness to expressive variation.",
     "instruction": "Read the following paragraph three times: once neutral, once happy/energetic, and once tired/slow.",
     "content": "On a rainy morning she stood by the window and watched the droplets race each other down the glass. The city hummed quietly, and somewhere a distant bus wheezed past. She sipped her coffee slowly as if trying to remember the last time she had felt completely unhurried."
+  },
+  {
+    "id": "E1",
+    "title": "Kazakh spontaneous paragraph",
+    "reason": "Encourages natural Kazakh speech and local phoneme coverage for diverse accent modeling.",
+    "instruction": "Read this paragraph naturally in Kazakh with your normal tone of voice.",
+    "content": "Күн жылы, аспан ашық, жел баяу соғып тұр. Ауылдың шетінде кішкентай өзеннің суы сыңғырлап ағып жатыр. Балалар далада күліп, доп ойнап жүр, иттер бір-бірімен жарысып үріп жатыр. Қарттар ағаш көлеңкесінде әңгіме айтып, шай ішіп отыр. Мен әжемнің пісірген бауырсағының иісін сезіп, үйге қарай асықтым. Ас үйден майдың шыжылы естіліп, терезеден бу көтеріліп тұр. Осы тыныш сәт менің балалық шағымды еске түсіреді. Таңғы тыныштық пен жылы күннің иісі бәрін бір сәтке тоқтатқандай. Осындай сәттерде өмірдің ең қарапайым сұлулығын сезінесің."
+  },
+  {
+    "id": "E2",
+    "title": "French spontaneous paragraph",
+    "reason": "Captures natural French rhythm, nasal vowels, and expressive prosody.",
+    "instruction": "Read this paragraph naturally in French, as if telling a story to a friend.",
+    "content": "Ce matin, la pluie tombait doucement sur les toits de la ville. Les rues brillaient sous les lampadaires, et l’odeur du café chaud venait des boulangeries. Une femme pressée tenait un parapluie rouge, tandis qu’un vieux monsieur lisait son journal à la terrasse d’un café. Le tram passait lentement, sonnant à chaque arrêt, et les enfants marchaient main dans la main vers l’école. Tout semblait calme et familier, comme si le temps s’était arrêté un instant. J’ai observé les passants, les visages concentrés, les gestes ordinaires. Chaque matin ressemble à celui d’hier, mais il y a toujours un détail qui change, une lumière nouvelle, un sourire inattendu."
+  },
+  {
+    "id": "E3",
+    "title": "Ukrainian spontaneous paragraph",
+    "reason": "Captures melodic intonation and soft consonants typical of Ukrainian speech.",
+    "instruction": "Read this paragraph naturally in Ukrainian, keeping a calm and steady tone.",
+    "content": "Сонце повільно сходить над річкою, і туман розсіюється між деревами. На подвір’ї чути спів птахів, далеке гавкання собаки та дзвін відра біля колодязя. Мати кличе дітей до сніданку, а сусід виходить у сад поливати квіти. Повітря свіже, пахне травою і теплим хлібом, який тільки-но вийняли з печі. Я сідаю на лавку біля хати, дивлюся, як світ поступово прокидається. Десь за городом чути трактор, а на небі пролітає зграя журавлів. Усе здається простим, рідним і таким спокійним, ніби час тут плине повільніше, ніж будь-де."
+  },
+  {
+    "id": "E4",
+    "title": "Russian spontaneous paragraph",
+    "reason": "Captures natural Russian articulation and emotional flow for spontaneous style modeling.",
+    "instruction": "Read this paragraph naturally in Russian with a relaxed, conversational tone.",
+    "content": "Утро началось спокойно: за окном пели птицы, солнце мягко освещало комнату. На кухне пахло свежим хлебом и чаем с мятой. Издалека доносились шаги прохожих и редкие звуки машин. Я открыл окно, вдохнул прохладный воздух и услышал, как где-то во дворе кто-то смеётся. Всё вокруг казалось таким знакомым — старые деревья, звон колокольчика на двери соседнего магазина, гул города вдали. Иногда простое утро может быть началом самого лучшего дня, если просто остановиться и заметить мелочи. Я налил себе кофе, сел у окна и подумал: как же хорошо быть здесь, сейчас."
   }
+  
 ]
