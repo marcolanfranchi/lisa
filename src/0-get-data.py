@@ -7,23 +7,29 @@ from rich.progress import Progress
 import time
 from config import PROMPTS_FILE, RAW_RECORDINGS_DIR, MANIFEST_FILE
 
-SAMPLE_RATE = 16000
 RECORDING_DURATION = 60
 COUNTDOWN_DURATION = 10
 
 console = Console()
 
 
+
 def record_with_progress(duration, filename):
-    """Record audio with progress bar feedback."""
+    """Record audio at the device's native sample rate."""
+    device_info = sd.query_devices(kind='input')
+    sample_rate = int(device_info['default_samplerate'])
+    console.print(f"[cyan]Using system's native sample rate: {sample_rate} Hz[/cyan]")
+
     with Progress(console=console, transient=True) as progress:
         task = progress.add_task("[cyan]recording...", total=duration)
-        audio = sd.rec(int(duration * SAMPLE_RATE), samplerate=SAMPLE_RATE, channels=1)
-        for _ in range(duration):
-            time.sleep(1)
-            progress.update(task, advance=1)
+        audio = sd.rec(int(duration * sample_rate), samplerate=sample_rate, channels=1)
+        start = time.time()
+        while (elapsed := time.time() - start) < duration:
+            progress.update(task, completed=elapsed)
+            time.sleep(0.1)
         sd.wait()
-    sf.write(filename, audio, SAMPLE_RATE)
+
+    sf.write(filename, audio, sample_rate)
 
 
 def main():
