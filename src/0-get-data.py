@@ -13,12 +13,10 @@ COUNTDOWN_DURATION = 10
 console = Console()
 
 
-
 def record_with_progress(duration, filename):
     """Record audio at the device's native sample rate."""
     device_info = sd.query_devices(kind='input')
     sample_rate = int(device_info['default_samplerate'])
-    console.print(f"[cyan]Using system's native sample rate: {sample_rate} Hz[/cyan]")
 
     with Progress(console=console, transient=True) as progress:
         task = progress.add_task("[cyan]recording...", total=duration)
