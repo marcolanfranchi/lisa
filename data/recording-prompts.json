@@ -47,7 +47,7 @@
     "title": "Prosody variation (same paragraph, different styles)",
     "reason": "Captures the same lexical content under different emotional tones; improves robustness to expressive variation.",
     "instruction": "Read the following paragraph three times: once neutral, once happy/energetic, and once tired/slow.",
-    "content": "On a rainy morning she stood by the window and watched the droplets race each other down the glass. The city hummed quietly, and somewhere a distant bus wheezed past. She sipped her coffee slowly as if trying to remember the last time she had felt completely unhurried. The smell of toast filled the air, mixing with the faint scent of wet pavement. A newspaper rustled on the table, untouched, while the sound of rain grew softer, steadier. She thought of places she’d once dreamed of visiting, of voices she hadn’t heard in years. The rain kept falling, each drop tracing a new path down the pane, as if writing stories she would never read."
+    "content": "On a rainy morning she stood by the window and watched the droplets race each other down the glass. The city hummed quietly, and somewhere a distant bus wheezed past. She sipped her coffee slowly as if trying to remember the last time she had felt completely unhurried. The smell of toast filled the air, mixing with the faint scent of wet pavement."
   },
   {
     "id": "E1",
