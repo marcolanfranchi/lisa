@@ -54,52 +54,63 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 4. Generate your dataset 
-This step needs to be done for 3-5 people to get a final dataset of multiple voices.
+## Data Pipeline
+
+### 0. Generate your dataset 
+
+This step should be performed for 3–5 people to build a multi-speaker dataset.
 
 ```bash
 python3 src/0-get-data.py
 ```
 <details>
 <summary>What this script does:</summary>
-
 - Prompts the user with recording instructions loaded from a JSON file.
 - Records 60-second audio sessions with countdown and progress bar feedback.
 - Splits each recording into overlapping 2s clips (50% overlap), trims silence, and discards too-short segments (max 79 segments per 1 min recording).
 - Saves processed clips with unique IDs in a structured folder (processed_clips/speaker_id/).
 - Generates a manifest CSV containing metadata (clip paths, speaker ID, script ID, timestamps).
-- Entire generated dataset gets placed into `data/generated/`.
-
+- Generated dataset of audio recordings gets placed into `data/generated/`.
 </details>
 
 
-### 5. Clean/normalize audio levels
+### 1. Clean/normalize audio levels
 
 ```bash
 python3 src/1-clean-audio.py
 ```
-<details>
-<summary>What this script does:</summary>
-
-- ...
-
+<details> <summary>What this script does</summary>
+- Normalizes volume levels across clips.
+- Removes excessive background noise.
+- Outputs cleaned audio recordings to data/generated/cleaned_recordings/.
 </details>
 
+### 2. Split Audio Clips
+
+```bash
+python3 src/2-split-clips.py
+```
+<details> <summary>What this script does</summary>
+
+- Splits audio clips into fixed length clips with 50% overlap per clip.
+- Outputs cleaned audio recordings to data/generated/processed_clips/.
+</details>
 
 ## Running the Interactive Interface
 
-We made a streamlit UI and a gradio component to demonstrate our model live. If you're not still in the venv, activate it again.
+We made a streamlit UI and a gradio component to demonstrate our model in real time.
+- Note: if your virtual environment is inactive, reactivate it before running these commands:
 
-### Running the UI
+### Run the Streamlit App
 
 ```bash
 python3 app/ui.py
 ```
-This will run the Streamlit/Python app at (http://localhost:8501)[http://localhost:8501].
+This will run the main Streamlit/Python interface at [http://localhost:8501](http://localhost:8501).
 
-### Running the Model Demo
+### Run the Model Demo
 
 ```bash
 python3 app/model.py
 ```
-This will run the Gradio/Python model demo (at (http://0.0.0.0:7860)[http://0.0.0.0:7860]), which will ve displayed in the home page of the Streamlit app as a compoent.
+This will run the Gradio/Python model demo (at [http://0.0.0.0:7860](http://0.0.0.0:7860)), which will be displayed in the home page of the Streamlit app as a compoent.
