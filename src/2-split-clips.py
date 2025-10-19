@@ -6,7 +6,7 @@ import pandas as pd
 import shutil
 from rich.console import Console
 from rich.progress import track
-from config import BALANCED_CLIPS_DIR, CLEANED_RECORDINGS_DIR, PROCESSED_CLIPS_DIR, MANIFEST_FILE
+from config import CLEANED_RECORDINGS_DIR, PROCESSED_CLIPS_DIR, MANIFEST_FILE
 
 # ---------------- CONFIG ----------------
 SAMPLE_RATE = 16000

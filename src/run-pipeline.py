@@ -31,6 +31,14 @@ def main():
         nothing, starts fresh recording session and saves data for next steps   
     """
 
+    # Start with ASCII art title
+    try:
+        with open("images/ascii.txt", "r") as f:
+            file_ascii_art = f.read()
+            print(file_ascii_art)
+    except FileNotFoundError:
+        print("Error: 'images/ascii.txt' not found.")
+
     console.rule("[bold red]Step 0/5: Get Data")
     step0.main()
     
