@@ -71,3 +71,35 @@ python3 src/0-get-data.py
 - Entire generated dataset gets placed into `data/generated/`.
 
 </details>
+
+
+### 5. Clean/normalize audio levels
+
+```bash
+python3 src/1-clean-audio.py
+```
+<details>
+<summary>What this script does:</summary>
+
+- ...
+
+</details>
+
+
+## Running the Interactive Interface
+
+We made a streamlit UI and a gradio component to demonstrate our model live. If you're not still in the venv, activate it again.
+
+### Running the UI
+
+```bash
+python3 app/ui.py
+```
+This will run the Streamlit/Python app at (http://localhost:8501)[http://localhost:8501].
+
+### Running the Model Demo
+
+```bash
+python3 app/model.py
+```
+This will run the Gradio/Python model demo (at (http://0.0.0.0:7860)[http://0.0.0.0:7860]), which will ve displayed in the home page of the Streamlit app as a compoent.
