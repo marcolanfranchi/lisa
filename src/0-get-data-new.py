@@ -1,18 +1,9 @@
 # 0-get-data.py
-# test videos:
-# https://www.youtube.com/watch?v=Jgecj1wsfUQ&list=LL&index=6
-#     - 3 speakers, clear audio, however many sound effects, 20 mins
-#
-# 
-#
 
 import os
-import time
 import json
-import torch
 import dotenv
 import yt_dlp
-import soundfile as sf
 from pathlib import Path
 from pydub import AudioSegment
 from pyannote.audio import Pipeline
@@ -20,7 +11,7 @@ from pyannote.audio.pipelines.utils.hook import ProgressHook
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.progress import Progress
-from config import RAW_RECORDINGS_DIR, NEW_MANIFEST_FILE 
+from config import DIARIZED_RECORDINGS_DIR, NEW_MANIFEST_FILE 
 
 # ---------------- CONFIG ----------------
 AUDIO_FORMAT = "mp3"
@@ -73,7 +64,7 @@ def diarize_audio(audio_path, output_dir):
     """
     Run speaker diarization and save each speaker segment as individual WAVs.
 
-    Args:
+    Args: 
         audio_path (Path): path to mp3/wav audio file
         output_dir (Path): directory to store speaker clips
 
@@ -83,7 +74,7 @@ def diarize_audio(audio_path, output_dir):
 
     console.rule(f"[bold green]Running speaker diarization on {audio_path.name}[/bold green]")
 
-    # Convert MP3 to temporary WAV first (prevents sample mismatch errors)
+    # Convert MP3 to temporary WAV first - prevents sample mismatch errors
     wav_path = output_dir / (audio_path.stem + "_clean.wav")
     AudioSegment.from_file(audio_path).set_frame_rate(16000).export(wav_path, format="wav")
     audio_path = wav_path
@@ -103,14 +94,14 @@ def diarize_audio(audio_path, output_dir):
     for i, (turn, speaker) in enumerate(diarization, start=1):
         start_ms = int(turn.start * 1000)
         end_ms = int(turn.end * 1000)
-        speaker_dir = output_dir / f"speaker_{speaker}"
+        speaker_dir = output_dir / speaker
         speaker_dir.mkdir(parents=True, exist_ok=True)
         clip = audio[start_ms:end_ms]
         out_file = speaker_dir / f"segment_{i:03d}.wav"
         clip.export(out_file, format="wav")
         segment_data.append({
             "segment_id": i,
-            "speaker": f"speaker_{speaker}",
+            "speaker": speaker,
             "start": turn.start,
             "end": turn.end,
             "path": str(out_file)
@@ -123,7 +114,7 @@ def main():
     """
     Main script to collect speaker segments from a YouTube video.
 
-    Places diarized speaker clips in RAW_RECORDINGS_DIR/<video_id>/
+    Places diarized speaker clips in DIARIZED_RECORDINGS_DIR/<video_id>/
     Updates NEW_MANIFEST_FILE with metadata about the video and segments.
     """
 
@@ -132,7 +123,7 @@ def main():
 
     # create base dir for this session
     video_id = url.split("v=")[-1].split("&")[0]
-    session_dir = RAW_RECORDINGS_DIR / video_id.replace("/", "_") # sanitize slashes to avoid nested dirs
+    session_dir = DIARIZED_RECORDINGS_DIR / video_id.replace("/", "_") # sanitize slashes to avoid nested dirs
     session_dir.mkdir(parents=True, exist_ok=True)
 
     # STEP 1: Download audio

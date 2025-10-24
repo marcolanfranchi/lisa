@@ -24,12 +24,12 @@ PROMPTS_FILE = DATA_DIR / "recording-prompts.json"
 RAW_RECORDINGS_DIR = GENERATED_DIR / "raw_recordings"
 CLEANED_RECORDINGS_DIR = GENERATED_DIR / "cleaned_recordings" 
 PROCESSED_CLIPS_DIR = GENERATED_DIR / "processed_clips"
-BALANCED_CLIPS_DIR = GENERATED_DIR / "balanced_clips"
+BALANCED_CLIPS_DIR = GENERATED_DIR / "filtered_balanced_clips"
 
 DIARIZED_RECORDINGS_DIR = GENERATED_DIR / "diarized_recordings"
 
 # Output files
 MANIFEST_FILE = GENERATED_DIR / "manifest.csv"
 NEW_MANIFEST_FILE = GENERATED_DIR / "new_manifest.csv"
-BALANCED_MANIFEST_FILE = GENERATED_DIR / "balanced_manifest.csv"
+BALANCED_MANIFEST_FILE = GENERATED_DIR / "filtered_balanced_manifest.csv"
 FEATURES_FILE = GENERATED_DIR / "vocal_features.csv"

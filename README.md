@@ -104,7 +104,7 @@ We made a streamlit UI and a gradio component to demonstrate our model in real t
 ### Run the Streamlit App
 
 ```bash
-python3 app/ui.py
+python3 app/app.py
 ```
 This will run the main Streamlit/Python interface at [http://localhost:8501](http://localhost:8501).
 
