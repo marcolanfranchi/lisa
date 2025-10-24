@@ -7,9 +7,9 @@ def page0():
     # ==============================================================================
     # Header
     # ==============================================================================
-    section_header("Raw Data Collection", "Data collection phase. Gathers audio from a provided file or YouTube link, \
-                  performs speaker diarization to identify and segment different speakers, and saves the \
-                  processed audio clips in `data/generated/raw_recordings/<audio_id>/`.")
+    section_header("Raw Data Collection", "Data collection phase. Collects \
+                    5 different 1-min audio clips of speech from the user and places them in \
+                    `data/generated/raw_recordings/<speaker_id>/`.")
 
     # ==============================================================================
     # Reusable Audio Analysis Page (on raw data)

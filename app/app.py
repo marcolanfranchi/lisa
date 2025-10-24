@@ -10,7 +10,7 @@ from appPages.page5 import page5
 
 # Streamlit page configurations
 st.set_page_config(
-    page_title="speaker-recognition",
+    page_title="LISA UI",
     layout="wide",
     initial_sidebar_state="expanded"
 )

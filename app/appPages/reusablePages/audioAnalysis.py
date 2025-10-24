@@ -4,9 +4,9 @@ import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from appPages.components import blank_lines
+from appPages.components import blank_lines, audio_player_component
 from streamlit_advanced_audio import audix, WaveSurferOptions
-from utils import SPEAKER_COLOURS, speaker_name, load_audio_data
+from utils import SPEAKER_COLOURS, load_audio_data
 import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
@@ -143,7 +143,7 @@ def show_audio_analysis_page(
 
     # --- UI labels ---
     version_label = "Raw" if version == "raw" else "Cleaned"
-    section_title = f"#### {version_label} Data"
+    section_title = f"#### {version_label} Data Summary"
 
     # --- Load data ---
     blank_lines(2)
@@ -180,39 +180,16 @@ def show_audio_analysis_page(
                 st.markdown(f":small[Total rec. length:]")
                 st.markdown(f"#### {duration_min * n_recordings:.1f} min")
 
-    # --- Audio file display section ---
+    # --- Audio file player section ---
     blank_lines(2)
     st.write("#### Audio Recordings")
+    
+    # Display each player row
+    with st.container(border=True):
+        audio_player_component(audio_data, wave_color=wave_color, progress_color=progress_color)
+
     speakers = list(audio_data.keys())
     unique_recordings = sorted({rec for recs in audio_data.values() for rec in recs})
-
-    n_speakers = len(speakers)
-    cols = st.columns(n_speakers)
-
-    for i, speaker in enumerate(speakers):
-        with cols[i]:
-            with st.expander(f"{speaker}'s recordings", expanded=False):
-                for recording, data in sorted(audio_data[speaker].items()):
-                    st.write(
-                        f"**{recording}** "
-                        f":blue-badge[Duration: {data['duration']:.2f}s] "
-                        f":orange-badge[Sample Rate: {data['sample_rate']}Hz]"
-                    )
-
-                    options = WaveSurferOptions(
-                        wave_color=wave_color,
-                        progress_color=progress_color,
-                        height=60,
-                        bar_width=2,
-                        bar_gap=1,
-                        normalize=False,
-                    )
-
-                    try:
-                        audix(data["path"], wavesurfer_options=options)
-                    except Exception as e:
-                        st.error(f"Error loading audio player: {str(e)}")
-                        st.audio(data["path"])
 
     # --- Waveform comparison ---
     blank_lines(2)

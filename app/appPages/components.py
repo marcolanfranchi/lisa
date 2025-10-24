@@ -65,38 +65,56 @@ def data_metrics(from_step=0) -> None:
 # Audio components
 # ==============================================================================
 
-def audioPlayer(
-    file_path: str,
-    wave_color: str = "#A1A1A1",
-    progress_color: str = "#3a3a3a",
-    height: int = 60,
-    normalize: bool = False,
-    ) -> None:
-    pass
-    
-def render_audio_player(
-    file_path: str,
-    wave_color: str = "#A1A1A1",
-    progress_color: str = "#3a3a3a",
-    height: int = 60,
-    normalize: bool = False,
-    ) -> None:
-    
-    """Render audio player with wavesurfer."""
-    options = WaveSurferOptions(
-        wave_color=wave_color,
-        progress_color=progress_color,
-        height=height,
-        bar_width=2,
-        bar_gap=1,
-        normalize=normalize,
-    )
-    
-    try:
-        audix(file_path, wavesurfer_options=options)
-    except Exception as e:
-        st.error(f"Error loading audio player: {str(e)}")
-        st.audio(file_path)
+def audio_player_component(
+    audio_data: dict,
+    wave_color="#A1A1A1",
+    progress_color="#3a3a3a",
+):
+    """
+    A reusable Streamlit component for selecting and playing one audio file.
+    """
+
+    speakers = list(audio_data.keys())
+
+    col1, col2 = st.columns(2)
+    with col1:
+        selected_speaker = st.selectbox(
+            f"Speaker ",
+            speakers,
+            key=f"speaker_",
+        )
+
+    with col2:
+        recordings = sorted(audio_data[selected_speaker].keys()) if selected_speaker else []
+        selected_recording = st.selectbox(
+            f"Recording",
+            recordings,
+            key=f"recording_",
+        )
+
+    if selected_speaker and selected_recording:
+        data = audio_data[selected_speaker][selected_recording]
+
+        st.markdown(
+            f"**{selected_recording}**  "
+            f":blue-badge[Duration: {data['duration']:.2f}s] "
+            f":orange-badge[Sample Rate: {data['sample_rate']}Hz]"
+        )
+
+        options = WaveSurferOptions(
+            wave_color=wave_color,
+            progress_color=progress_color,
+            height=60,
+            bar_width=2,
+            bar_gap=1,
+            normalize=False,
+        )
+
+        try:
+            audix(data["path"], wavesurfer_options=options, key=f"audix_")
+        except Exception as e:
+            st.error(f"Error loading audio: {e}")
+            st.audio(data["path"])
 
 
 def blank_lines(n=1):
