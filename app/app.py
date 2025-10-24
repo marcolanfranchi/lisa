@@ -98,7 +98,10 @@ def main():
         st.write("Updated: :grey-badge[Sept 28, 2025]")
         # TODO: add your name and a link below (inside the string after the comma) like this...
         # :grey-badge[[Your Name](your-link)]
-        st.write("Developers: :grey-badge[[Marco Lanfranchi](https://github.com/marcolanfranchi)], ")
+        st.write("Developers: :grey-badge[[Marco Lanfranchi](https://github.com/marcolanfranchi)] \
+                 :grey-badge[[Dyk Kyong Do]()] \
+                 :grey-badge[[Georgii Kuzhel]()]\
+                 :grey-badge[[Vladimir Yegorin]()] ")
         sac.menu(
             items=[sac.MenuItem(None, icon="github", href="https://github.com/marcolanfranchi/speaker-recognition")],
             key="link_menu",
