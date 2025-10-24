@@ -1,10 +1,10 @@
-# 1-clean-audio.py
+# src/1-clean-audio.py
+from .config import RAW_RECORDINGS_DIR, CLEANED_RECORDINGS_DIR
 import librosa
 import soundfile as sf
 from rich.console import Console
 from rich.progress import track
 import noisereduce as nr
-from config import RAW_RECORDINGS_DIR, CLEANED_RECORDINGS_DIR
 
 # ---------------- CONFIG ----------------
 SAMPLE_RATE = 16000

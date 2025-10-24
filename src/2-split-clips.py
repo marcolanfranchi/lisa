@@ -1,4 +1,5 @@
-# 2-split-clips.py
+# src/2-split-clips.py
+from .config import CLEANED_RECORDINGS_DIR, PROCESSED_CLIPS_DIR, MANIFEST_FILE
 import uuid
 import librosa
 import soundfile as sf
@@ -6,7 +7,6 @@ import pandas as pd
 import shutil
 from rich.console import Console
 from rich.progress import track
-from config import CLEANED_RECORDINGS_DIR, PROCESSED_CLIPS_DIR, MANIFEST_FILE
 
 # ---------------- CONFIG ----------------
 SAMPLE_RATE = 16000

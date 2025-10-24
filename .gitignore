@@ -7,3 +7,7 @@ __pycache__/
 
 # models
 models/
+
+# temp files
+temp_clean.wav
+temp_clip.wav

@@ -1,3 +1,5 @@
+# src/0-get-data.py
+from .config import PROMPTS_FILE, RAW_RECORDINGS_DIR, MANIFEST_FILE
 import json
 import sounddevice as sd
 import soundfile as sf
@@ -5,7 +7,6 @@ from rich.console import Console
 from rich.prompt import Prompt
 from rich.progress import Progress
 import time
-from config import PROMPTS_FILE, RAW_RECORDINGS_DIR, MANIFEST_FILE
 
 RECORDING_DURATION = 60
 COUNTDOWN_DURATION = 10

@@ -1,4 +1,5 @@
-# 3-filter-and-balance-data.py
+# src/3-filter-and-balance-data.py
+from .config import PROCESSED_CLIPS_DIR, BALANCED_CLIPS_DIR, BALANCED_MANIFEST_FILE
 import shutil
 import random
 import librosa
@@ -6,10 +7,9 @@ import pandas as pd
 import numpy as np
 from rich.console import Console
 from rich.progress import track
-from config import PROCESSED_CLIPS_DIR, BALANCED_CLIPS_DIR, BALANCED_MANIFEST_FILE
 
 # ---------------- CONFIG ----------------
-RMS_THRESHOLD = 0.006902
+RMS_THRESHOLD = 0.005
 SAMPLE_RATE = 16000
 RANDOM_SEED = 42       # for reproducible balancing
 # ----------------------------------------
