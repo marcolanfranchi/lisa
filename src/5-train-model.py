@@ -1,8 +1,6 @@
-import os
-import librosa
-import numpy as np
+# src/5-train-model.py
+from .config import FEATURES_FILE, MODEL_DIR
 import pandas as pd
-from pathlib import Path
 from rich.console import Console
 from rich.progress import track
 

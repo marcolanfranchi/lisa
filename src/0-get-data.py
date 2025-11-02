@@ -1,3 +1,5 @@
+# src/0-get-data.py
+from .config import PROMPTS_FILE, RAW_RECORDINGS_DIR, MANIFEST_FILE
 import json
 import sounddevice as sd
 import soundfile as sf

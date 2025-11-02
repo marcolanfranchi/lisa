@@ -1,4 +1,5 @@
-# 2-split-clips.py
+# src/2-split-clips.py
+from .config import CLEANED_RECORDINGS_DIR, PROCESSED_CLIPS_DIR, MANIFEST_FILE
 import uuid
 import librosa
 import soundfile as sf

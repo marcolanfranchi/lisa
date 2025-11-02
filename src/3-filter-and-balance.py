@@ -1,4 +1,5 @@
-# 3-filter-and-balance-data.py
+# src/3-filter-and-balance-data.py
+from .config import PROCESSED_CLIPS_DIR, BALANCED_CLIPS_DIR, BALANCED_MANIFEST_FILE
 import shutil
 import random
 import librosa
