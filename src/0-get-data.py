@@ -5,13 +5,13 @@ from rich.console import Console
 from rich.prompt import Prompt
 from rich.progress import Progress
 import time
-from config import PROMPTS_FILE, RAW_RECORDINGS_DIR, MANIFEST_FILE
+from src.config import load_config
 
-RECORDING_DURATION = 60
-COUNTDOWN_DURATION = 10
+
 
 console = Console()
 
+cfg = load_config()
 
 def record_with_progress(duration, filename):
     """Record audio at the device's native sample rate."""
@@ -32,7 +32,7 @@ def record_with_progress(duration, filename):
 
 def main():
     """Main script for recording all prompts."""
-    with open(PROMPTS_FILE, encoding="utf-8") as f:
+    with open(cfg["PROMPTS_FILE"], encoding="utf-8") as f:
         all_prompts = json.load(f)
 
     # ask for speaker name
@@ -49,7 +49,7 @@ def main():
     prompts = [p for p in all_prompts if p["id"] in ["A", "B", "C", "D", selected_e]]
 
     # create speaker folder
-    session_dir = RAW_RECORDINGS_DIR / speaker_id
+    session_dir = cfg["RAW_RECORDINGS_DIR"] / speaker_id
     session_dir.mkdir(parents=True, exist_ok=True)
 
     for script in prompts:
@@ -66,14 +66,16 @@ def main():
         console.rule()
 
         out_file = session_dir / f"{script['id']}.wav"
-        console.print(f"[cyan]recording will start in {COUNTDOWN_DURATION} seconds... get ready[/cyan]")
-        time.sleep(COUNTDOWN_DURATION)
+        console.print(f'[cyan]recording will start in {cfg["COUNTDOWN_DURATION"]} seconds... get ready[/cyan]')
 
-        record_with_progress(RECORDING_DURATION, out_file)
+        time.sleep(cfg["COUNTDOWN_DURATION"])
+
+        record_with_progress(cfg["RECORDING_DURATION"], out_file)
         console.print(f"[bold green]recording saved: {out_file}[/bold green]")
 
     console.rule("[bold green]all done! thank you for your recordings![/bold green]")
-    console.print(f"[bold green]{speaker_id}'s raw recordings ready at {session_dir}.[/bold green] saved manifest: {MANIFEST_FILE}")
+    console.print(f"[bold green]{speaker_id}'s raw recordings ready at {session_dir}.[/bold green] saved manifest: {cfg['MANIFEST_FILE']}")
+
 
 
 if __name__ == "__main__":

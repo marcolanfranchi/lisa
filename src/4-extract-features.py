@@ -6,26 +6,23 @@ import pandas as pd
 from pathlib import Path
 from rich.console import Console
 from rich.progress import track
-from config import BALANCED_CLIPS_DIR, FEATURES_FILE
+from src.config import load_config
 
-# ---------------- CONFIG ----------------
-SAMPLE_RATE = 16000
-N_MFCC = 13
-HOP_LENGTH = 512
-N_FFT = 2048
-# ----------------------------------------
+
 
 console = Console()
+
+cfg = load_config() 
 
 def extract_basic_mfcc_features(y, sr):
     """Extract mean and std of MFCCs and their deltas."""
     mfccs = librosa.feature.mfcc(
-        y=y, sr=sr, n_mfcc=N_MFCC, hop_length=HOP_LENGTH, n_fft=N_FFT
+        y=y, sr=sr, n_mfcc=cfg["N_MFCC"], hop_length=cfg["HOP_LENGTH"], n_fft=cfg["N_FFT"]
     )
     mfcc_delta = librosa.feature.delta(mfccs)
     
     features = {}
-    for i in range(N_MFCC):
+    for i in range(cfg["N_MFCC"]):
         features[f"mfcc_{i+1}_mean"] = np.mean(mfccs[i])
         features[f"mfcc_{i+1}_std"] = np.std(mfccs[i])
         features[f"mfcc_{i+1}_delta_mean"] = np.mean(mfcc_delta[i])
@@ -36,7 +33,7 @@ def extract_basic_mfcc_features(y, sr):
 def extract_features(file_path):
     """Extract core vocal features from an audio file."""
     try:
-        y, sr = librosa.load(file_path, sr=SAMPLE_RATE)
+        y, sr = librosa.load(file_path, sr=cfg["SAMPLE_RATE"])
         y = librosa.effects.preemphasis(y, coef=0.97)
 
         features = extract_basic_mfcc_features(y, sr)
@@ -50,11 +47,11 @@ def extract_features(file_path):
         return None
 
 def main():
-    if not BALANCED_CLIPS_DIR.exists():
-        console.print(f"[red]Error: Missing directory {BALANCED_CLIPS_DIR}[/red]")
+    if not cfg["BALANCED_CLIPS_DIR"].exists():
+        console.print(f'[red]Error: Missing directory {cfg["BALANCED_CLIPS_DIR"]}[/red]')
         return
 
-    speaker_dirs = [d for d in BALANCED_CLIPS_DIR.iterdir() if d.is_dir()]
+    speaker_dirs = [d for d in cfg["BALANCED_CLIPS_DIR"].iterdir() if d.is_dir()]
     all_features = []
 
     for speaker_dir in speaker_dirs:
@@ -73,10 +70,10 @@ def main():
         return
 
     df = pd.DataFrame(all_features)
-    FEATURES_FILE.parent.mkdir(parents=True, exist_ok=True)
-    df.to_csv(FEATURES_FILE, index=False)
+    cfg["FEATURES_FILE"].parent.mkdir(parents=True, exist_ok=True)
+    df.to_csv(cfg["FEATURES_FILE"], index=False)
 
-    console.print(f"[green]Saved {len(df)} samples with {df.shape[1]} features to {FEATURES_FILE}[/green]")
+    console.print(f'[green]Saved {len(df)} samples with {df.shape[1]} features to {cfg["FEATURES_FILE"]}[/green]')
 
 if __name__ == "__main__":
     main()

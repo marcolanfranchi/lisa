@@ -56,12 +56,12 @@ pip install -r requirements.txt
 
 ## Data Pipeline
 
-### 0. Generate your dataset 
+### 0. Generate your audio data 
 
 This step should be performed for 3–5 people to build a multi-speaker dataset.
 
 ```bash
-python3 src/0-get-data.py
+python3 -m src.0-get-data.py
 ```
 <details>
 <summary>What this script does:</summary>
@@ -77,7 +77,7 @@ python3 src/0-get-data.py
 ### 1. Clean/normalize audio levels
 
 ```bash
-python3 src/1-clean-audio.py
+python3 -m src.1-clean-audio
 ```
 <details> <summary>What this script does</summary>
 - Normalizes volume levels across clips.
@@ -85,19 +85,47 @@ python3 src/1-clean-audio.py
 - Outputs cleaned audio recordings to data/generated/cleaned_recordings/.
 </details>
 
-### 2. Split Audio Clips
 
+### 2. Split Audio Clips
 ```bash
-python3 src/2-split-clips.py
+python3 -m src.2-split-clips
 ```
 <details> <summary>What this script does</summary>
-
 - Splits audio clips into fixed length clips with 50% overlap per clip.
 - Outputs cleaned audio recordings to data/generated/processed_clips/.
 </details>
 
-## Running the Interactive Interface
 
+### 3. Filter & Balance Audio Clips
+```bash
+python3 -m src.3-filter-and-balance
+```
+<details> <summary>What this script does</summary>
+- ...
+</details>
+
+
+### 4. Extract Features
+```bash
+python3 -m src.4-extract-features
+```
+<details> <summary>What this script does</summary>
+- ...
+</details>
+
+
+
+### 5. Train Model
+```bash
+python3 -m src.5-train-model
+```
+<details> <summary>What this script does</summary>
+- ...
+</details>
+
+
+
+## Running the Interactive Interface
 We made a streamlit UI and a gradio component to demonstrate our model in real time.
 - Note: if your virtual environment is inactive, reactivate it before running these commands:
 
@@ -113,4 +141,4 @@ This will run the main Streamlit/Python interface at [http://localhost:8501](htt
 ```bash
 python3 app/model.py
 ```
-This will run the Gradio/Python model demo (at [http://0.0.0.0:7860](http://0.0.0.0:7860)), which will be displayed in the home page of the Streamlit app as a compoent.
+This will run the Gradio/Python model demo (at [http://localhost:7860](http://localhost:7860)), which will be displayed in the home page of the Streamlit app as a compoent.

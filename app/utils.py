@@ -5,7 +5,7 @@ import sys
 import numpy as np
 import librosa
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
-from src.config import RAW_RECORDINGS_DIR, PROCESSED_CLIPS_DIR, CLEANED_RECORDINGS_DIR, BALANCED_CLIPS_DIR
+from config import load_config
 
 CACHE_TTL = 60*10  # seconds
 
@@ -16,7 +16,8 @@ SPEAKER_COLOURS = {
     "vova": "#5D825D",     # Green
     "kolya": "#2668ca",   # Blue
 }
-
+ 
+cfg = load_config()
 def speaker_name(speaker_id):
     """ returns the formatted (colour-highlighted) speaker name """
     colour = SPEAKER_COLOURS.get(speaker_id, "#8A8989")  # Default to grey if not found
@@ -34,7 +35,7 @@ def get_audio_metadata(from_step=0):
     split_overlap = 0.5 * 100
 
     # get # of folders in the path
-    path = pathlib.Path(RAW_RECORDINGS_DIR)
+    path = pathlib.Path(cfg["RAW_RECORDINGS_DIR"])
     n_speakers = 0
     for folder in path.iterdir():
         if folder.is_dir():
@@ -53,7 +54,7 @@ def get_audio_metadata(from_step=0):
         filtered_clips = "N/A"
     else:
         n_clips = 0
-        clips_path = pathlib.Path(PROCESSED_CLIPS_DIR)
+        clips_path = pathlib.Path(cfg["PROCESSED_CLIPS_DIR"])
         for folder in clips_path.iterdir():
             if folder.is_dir():
                 n_clips += len(list(folder.glob("*.wav")))

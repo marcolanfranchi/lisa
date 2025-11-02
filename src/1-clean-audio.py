@@ -4,15 +4,13 @@ import soundfile as sf
 from rich.console import Console
 from rich.progress import track
 import noisereduce as nr
-from config import RAW_RECORDINGS_DIR, CLEANED_RECORDINGS_DIR
+from src.config import load_config
 
-# ---------------- CONFIG ----------------
-SAMPLE_RATE = 16000
-# ----------------------------------------
 
 # setup console
 console = Console()
 
+cfg = load_config()
 
 def clean_audio(input_path, output_path):
     """
@@ -27,7 +25,7 @@ def clean_audio(input_path, output_path):
     """
     try:
         # load audio
-        y, sr = librosa.load(input_path, sr=SAMPLE_RATE)
+        y, sr = librosa.load(input_path, sr=cfg["SAMPLE_RATE"])
         
         # 1. noise reduction using noisereduce library
         # use the first 0.5 seconds as noise sample for stationary noise reduction
@@ -68,15 +66,15 @@ def main():
         raw recordings in RAW_RECORDINGS_DIR
     """
 
-    if not RAW_RECORDINGS_DIR.exists():
-        console.print(f"[red]error: raw recordings directory not found: {RAW_RECORDINGS_DIR}[/red]")
+    if not cfg["RAW_RECORDINGS_DIR"].exists():
+        console.print(f'[red]error: raw recordings directory not found: {cfg["RAW_RECORDINGS_DIR"]}[/red]')
         return
     
     # find all speaker directories
-    speaker_dirs = [d for d in RAW_RECORDINGS_DIR.iterdir() if d.is_dir()]
+    speaker_dirs = [d for d in cfg["RAW_RECORDINGS_DIR"].iterdir() if d.is_dir()]
     
     if not speaker_dirs:
-        console.print(f"[red]error: no speaker directories found in {RAW_RECORDINGS_DIR}[/red]")
+        console.print(f'[red]error: no speaker directories found in {cfg["RAW_RECORDINGS_DIR"]}[/red]')
         return
     
     console.print(f"[cyan]found {len(speaker_dirs)} speaker(s) to process[/cyan]")
@@ -90,7 +88,7 @@ def main():
         console.rule(f"[bold green]processing speaker: {speaker_id}[/bold green]")
         
         # create cleaned directory for this speaker
-        cleaned_speaker_dir = CLEANED_RECORDINGS_DIR / speaker_id
+        cleaned_speaker_dir = cfg["CLEANED_RECORDINGS_DIR"] / speaker_id
         cleaned_speaker_dir.mkdir(parents=True, exist_ok=True)
         
         # find all wav files for this speaker
@@ -113,7 +111,8 @@ def main():
     # summary
     console.rule("[bold green]cleaning complete![/bold green]")
     console.print(f"[bold green]processed {cleaned_files}/{total_files} files successfully[/bold green]")
-    console.print(f"[bold green]cleaned recordings saved to: {CLEANED_RECORDINGS_DIR}[/bold green]")
+    console.print(f'[bold green]cleaned recordings saved to: {cfg["CLEANED_RECORDINGS_DIR"]}[/bold green]')
+
     
     if cleaned_files < total_files:
         console.print(f"[yellow]warning: {total_files - cleaned_files} files had errors (check cleaning.log)[/yellow]")

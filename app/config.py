@@ -17,4 +17,3 @@ def load_config(path: Path | str = CONFIG_PATH):
             cfg[k] = Path(v).resolve()  # resolves relative to current working dir
     return cfg
 
-
