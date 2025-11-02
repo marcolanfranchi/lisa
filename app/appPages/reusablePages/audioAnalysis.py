@@ -10,7 +10,9 @@ from utils import SPEAKER_COLOURS, load_audio_data
 import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
-from src.config import RAW_RECORDINGS_DIR, CLEANED_RECORDINGS_DIR
+from config import load_config
+
+cfg = load_config()
 
 def create_waveform_comparison(audio_data, selected_speakers=None, selected_recording="A.wav"):
     """Create overlaid waveform visualization for selected speakers."""
@@ -137,9 +139,9 @@ def show_audio_analysis_page(
 
     # Get data path from config (assuming config.RAW_AUDIO_PATH etc.)
     if version == "raw":
-        data_path = RAW_RECORDINGS_DIR
+        data_path = cfg["RAW_RECORDINGS_DIR"]
     elif version == "cleaned":
-        data_path = CLEANED_RECORDINGS_DIR
+        data_path = cfg["CLEANED_RECORDINGS_DIR"]
 
     # --- UI labels ---
     version_label = "Raw" if version == "raw" else "Cleaned"

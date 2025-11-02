@@ -2,26 +2,32 @@
 from .config import FEATURES_FILE, MODEL_DIR
 import pandas as pd
 from rich.console import Console
+from rich.progress import track
+
 import pickle
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score, classification_report
 
+from src.config import load_config
+
 console = Console()
+
+cfg = load_config()
 
 def main():
     """Main function to train speaker recognition model using KNN."""
     
-    if not FEATURES_FILE.exists():
-        console.print(f"[red]error: features file not found: {FEATURES_FILE}[/red]")
+    if not cfg["FEATURES_FILE"].exists():
+        console.print(f'[red]error: features file not found: {cfg["FEATURES_FILE"]}[/red]')
         return
     
     console.rule("[bold green]starting model training[/bold green]")
     
     # load feature manifest (CSV)
-    console.print(f"[cyan]loading feature manifest from {FEATURES_FILE}[/cyan]")
-    feature_manifest = pd.read_csv(FEATURES_FILE)
+    console.print(f'[cyan]loading feature manifest from {cfg["FEATURES_FILE"]}[/cyan]')
+    feature_manifest = pd.read_csv(cfg["FEATURES_FILE"])
 
     if feature_manifest.empty:
         console.print(f"[red]error: feature manifest is empty[/red]")
@@ -36,9 +42,9 @@ def main():
         return
     
     # save trained model and scaler
-    MODEL_DIR.mkdir(parents=True, exist_ok=True)
-    model_path = MODEL_DIR / "speaker_recognition_knn.pkl"
-    scaler_path = MODEL_DIR / "scaler.pkl"
+    cfg["MODEL_DIR"].mkdir(parents=True, exist_ok=True)
+    model_path = cfg["MODEL_DIR"] / "speaker_recognition_knn.pkl"
+    scaler_path = cfg["MODEL_DIR"] / "scaler.pkl"
     with open(model_path, 'wb') as f:
         pickle.dump(knn_model, f)
     with open(scaler_path, 'wb') as f:

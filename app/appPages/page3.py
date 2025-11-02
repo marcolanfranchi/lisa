@@ -9,7 +9,9 @@ import plotly.graph_objects as go
 from streamlit_advanced_audio import audix, WaveSurferOptions
 from appPages.components import section_header, blank_lines
 from utils import SPEAKER_COLOURS, load_audio_data
-from src.config import BALANCED_CLIPS_DIR, BALANCED_MANIFEST_FILE
+from config import load_config
+
+cfg = load_config()
 
 
 def page3():
@@ -26,18 +28,19 @@ def page3():
     # ==============================================================================
     # Load Balanced Data
     # ==============================================================================
-    st.write(BALANCED_CLIPS_DIR)
-    audio_data = load_audio_data(BALANCED_CLIPS_DIR)
-    manifest_df = pd.read_csv(BALANCED_MANIFEST_FILE) if os.path.exists(BALANCED_MANIFEST_FILE) else None
+    st.write(cfg["BALANCED_CLIPS_DIR"])
+    audio_data = load_audio_data(cfg["BALANCED_CLIPS_DIR"])
+    manifest_df = pd.read_csv(cfg["BALANCED_MANIFEST_FILE"]) if os.path.exists(cfg["BALANCED_MANIFEST_FILE"]) else None
 
-    if os.path.exists(BALANCED_MANIFEST_FILE):
+    if os.path.exists(cfg["BALANCED_MANIFEST_FILE"]):
         try:
-            manifest_df = pd.read_csv(BALANCED_MANIFEST_FILE)
+            manifest_df = pd.read_csv(cfg["BALANCED_MANIFEST_FILE"])
         except Exception as e:
             st.error(f"Error loading manifest: {str(e)}")
 
     if not audio_data:
-        st.warning(f"No balanced audio data found in `{BALANCED_CLIPS_DIR}`. Please run 3-filter-and-balance.py.")
+        st.warning(f"No balanced audio data found in `{cfg['BALANCED_CLIPS_DIR']}`. Please run 3-filter-and-balance.py.")
+
         return
 
     # ==============================================================================

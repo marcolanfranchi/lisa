@@ -7,16 +7,14 @@ import pandas as pd
 import shutil
 from rich.console import Console
 from rich.progress import track
+from src.config import load_config
 
-# ---------------- CONFIG ----------------
-SAMPLE_RATE = 16000
-CLIP_LEN = 2   # seconds
-STEP = 1     # seconds (50% overlap)
-# ----------------------------------------
+
 
 # setup console
 console = Console()
 
+cfg = load_config()
 
 def split_audio(file_path, speaker_id, script_id):
     """
@@ -32,9 +30,9 @@ def split_audio(file_path, speaker_id, script_id):
     """
     try:
         # load audio
-        y, sr = librosa.load(file_path, sr=SAMPLE_RATE)
-        clip_len = int(CLIP_LEN * sr)
-        step = int(STEP * sr)
+        y, sr = librosa.load(file_path, sr=cfg["SAMPLE_RATE"])
+        clip_len = int(cfg["CLIP_LEN"] * sr)
+        step = int(cfg["STEP"] * sr)
 
         clips = []
         
@@ -46,7 +44,7 @@ def split_audio(file_path, speaker_id, script_id):
             # generate unique clip ID
             clip_id = str(uuid.uuid4())[:8]
             out_name = f"{script_id}_{clip_id}.wav"
-            out_path = PROCESSED_CLIPS_DIR / speaker_id / out_name
+            out_path = cfg["PROCESSED_CLIPS_DIR"] / speaker_id / out_name
 
             # ensure output directory exists
             out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -90,15 +88,15 @@ def main():
         cleaned recordings in CLEANED_RECORDINGS_DIR
     """
 
-    if not CLEANED_RECORDINGS_DIR.exists():
-        console.print(f"[red]error: cleaned recordings directory not found: {CLEANED_RECORDINGS_DIR}[/red]")
+    if not cfg["CLEANED_RECORDINGS_DIR"].exists():
+        console.print(f'[red]error: cleaned recordings directory not found: {cfg["CLEANED_RECORDINGS_DIR"]}[/red]')
         return
     
     # find all speaker directories
-    speaker_dirs = [d for d in CLEANED_RECORDINGS_DIR.iterdir() if d.is_dir()]
+    speaker_dirs = [d for d in cfg["CLEANED_RECORDINGS_DIR"].iterdir() if d.is_dir()]
     
     if not speaker_dirs:
-        console.print(f"[red]error: no speaker directories found in {CLEANED_RECORDINGS_DIR}[/red]")
+        console.print(f'[red]error: no speaker directories found in {cfg["CLEANED_RECORDINGS_DIR"]}[/red]')
         return
     
     console.print(f"[cyan]found {len(speaker_dirs)} speaker(s) to process[/cyan]")
@@ -111,7 +109,7 @@ def main():
     for speaker_dir in speaker_dirs:
 
         # remove existing processed clips for this speaker to avoid duplicates
-        processed_speaker_dir = PROCESSED_CLIPS_DIR / speaker_dir.name
+        processed_speaker_dir = cfg["PROCESSED_CLIPS_DIR"] / speaker_dir.name
         if processed_speaker_dir.exists():
             console.print(f"[yellow]cleaning existing output directory: {processed_speaker_dir}[/yellow]")
             shutil.rmtree(processed_speaker_dir)
@@ -149,16 +147,16 @@ def main():
     if all_clips:
         console.print(f"[cyan]saving manifest with {len(all_clips)} clips...[/cyan]")
         df = pd.DataFrame(all_clips)
-        MANIFEST_FILE.parent.mkdir(parents=True, exist_ok=True)
-        df.to_csv(MANIFEST_FILE, index=False)
-        console.print(f"[bold green]manifest saved: {MANIFEST_FILE}[/bold green]")
+        cfg["MANIFEST_FILE"].parent.mkdir(parents=True, exist_ok=True)
+        df.to_csv(cfg["MANIFEST_FILE"], index=False)
+        console.print(f'[bold green]manifest saved: {cfg["MANIFEST_FILE"]}[/bold green]')
     else:
         console.print(f"[red]no clips generated, manifest not created[/red]")
     
     # summary
     console.rule("[bold green]splitting complete![/bold green]")
     console.print(f"[bold green]processed {total_files} files into {total_clips} clips[/bold green]")
-    console.print(f"[bold green]processed clips saved to: {PROCESSED_CLIPS_DIR}[/bold green]")
+    console.print(f'[bold green]processed clips saved to: {cfg["PROCESSED_CLIPS_DIR"]}[/bold green]')
 
 
 if __name__ == "__main__":

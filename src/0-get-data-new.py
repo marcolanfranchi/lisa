@@ -11,16 +11,20 @@ from pyannote.audio.pipelines.utils.hook import ProgressHook
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.progress import Progress
-from config import DIARIZED_RECORDINGS_DIR, NEW_MANIFEST_FILE 
+from src.config import load_config
+#from config import DIARIZED_RECORDINGS_DIR, NEW_MANIFEST_FILE 
 
 # ---------------- CONFIG ----------------
-AUDIO_FORMAT = "mp3"
-SAMPLE_RATE = 16000
+
 # ----------------------------------------
 
 # setup console
 console = Console()
 dotenv.load_dotenv()
+
+#load config.yaml
+cfg = load_config()
+
 
 # load HuggingFace token
 HF_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
@@ -49,7 +53,7 @@ def download_youtube_audio(url, output_dir):
         'outtmpl': str(output_dir / '%(title)s.%(ext)s'),
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
-            'preferredcodec': AUDIO_FORMAT,
+            'preferredcodec': cfg["AUDIO_FORMAT"],
             'preferredquality': '192',
         }],
         'quiet': True
@@ -57,7 +61,7 @@ def download_youtube_audio(url, output_dir):
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
-        filename = ydl.prepare_filename(info).rsplit('.', 1)[0] + f".{AUDIO_FORMAT}"
+        filename = ydl.prepare_filename(info).rsplit('.', 1)[0] + f".{cfg["AUDIO_FORMAT"]}"
         return Path(filename)
 
 def diarize_audio(audio_path, output_dir):
@@ -123,7 +127,7 @@ def main():
 
     # create base dir for this session
     video_id = url.split("v=")[-1].split("&")[0]
-    session_dir = DIARIZED_RECORDINGS_DIR / video_id.replace("/", "_") # sanitize slashes to avoid nested dirs
+    session_dir = cfg["DIARIZED_RECORDINGS_DIR"] / video_id.replace("/", "_") # sanitize slashes to avoid nested dirs
     session_dir.mkdir(parents=True, exist_ok=True)
 
     # STEP 1: Download audio
@@ -147,20 +151,20 @@ def main():
         "segments": segments
     }
 
-    if not NEW_MANIFEST_FILE.exists():
+    if not cfg["NEW_MANIFEST_FILE"].exists():
         manifest = []
     else:
-        with open(NEW_MANIFEST_FILE) as f:
+        with open(cfg["NEW_MANIFEST_FILE"]) as f:
             manifest = json.load(f)
 
     manifest.append(manifest_entry)
 
-    with open(NEW_MANIFEST_FILE, "w") as f:
+    with open(cfg["EW_MANIFEST_FILE"], "w") as f:
         json.dump(manifest, f, indent=2)
 
     console.rule("[bold green]All done![/bold green]")
     console.print(f"[bold cyan]Speaker clips ready in:[/bold cyan] {session_dir}")
-    console.print(f"[bold cyan]Manifest updated:[/bold cyan] {NEW_MANIFEST_FILE}")
+    console.print(f"[bold cyan]Manifest updated:[/bold cyan] {cfg["NEW_MANIFEST_FILE"]}")
 
 
 if __name__ == "__main__":

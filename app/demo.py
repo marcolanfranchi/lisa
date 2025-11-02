@@ -17,18 +17,19 @@ from pathlib import Path
 import importlib
 import threading
 from queue import Queue
+from config import load_config
 
 # === Import your feature extraction + cleaning utilities ===
 root_dir = Path(__file__).resolve().parent.parent
 sys.path.append(str(root_dir))
 step1 = importlib.import_module("src.1-clean-audio")
 step4 = importlib.import_module("src.4-extract-features")
-from src.config import MODEL_DIR
+cfg = load_config()
 
 # === Load trained model and scaler ===
-with open(MODEL_DIR / "speaker_recognition_knn.pkl", "rb") as f:
+with open(cfg["MODEL_DIR"] / "speaker_recognition_knn.pkl", "rb") as f:
     model = pickle.load(f)
-with open(MODEL_DIR / "scaler.pkl", "rb") as f:
+with open(cfg["MODEL_DIR"] / "scaler.pkl", "rb") as f:
     scaler = pickle.load(f)
 
 # === Speech recognizer ===
@@ -395,7 +396,7 @@ with gr.Blocks(
 
 if __name__ == "__main__":
     print("[INFO] Starting Gradio demo...")
-    print(f"[INFO] Model loaded: {MODEL_DIR / 'speaker_recognition_knn.pkl'}")
+    print(f"[INFO] Model loaded: {cfg['MODEL_DIR'] / 'speaker_recognition_knn.pkl'}")
     print(f"[INFO] Processing: {CLIP_LENGTH}s clips every {PROCESSING_INTERVAL}s")
     
     demo.launch(

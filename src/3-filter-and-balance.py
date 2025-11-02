@@ -7,16 +7,17 @@ import pandas as pd
 import numpy as np
 from rich.console import Console
 from rich.progress import track
+from src.config import load_config
 
-# ---------------- CONFIG ----------------
-RMS_THRESHOLD = 0.005
-SAMPLE_RATE = 16000
-RANDOM_SEED = 42       # for reproducible balancing
-# ----------------------------------------
+
 
 # setup console
 console = Console()
-random.seed(RANDOM_SEED)
+
+cfg = load_config()
+
+random.seed(cfg["RANDOM_SEED"])
+
 
 
 def analyze_clip_quality(file_path):
@@ -30,7 +31,7 @@ def analyze_clip_quality(file_path):
         dict with quality metrics or None if error
     """
     try:
-        y, sr = librosa.load(file_path, sr=SAMPLE_RATE)
+        y, sr = librosa.load(file_path, sr=cfg["SAMPLE_RATE"])
         
         # calculate RMS energy
         rms = librosa.feature.rms(y=y)[0]
@@ -38,7 +39,7 @@ def analyze_clip_quality(file_path):
         
         return {
             'rms_mean': rms_mean,
-            'passes_threshold': rms_mean >= RMS_THRESHOLD
+            'passes_threshold': rms_mean >= cfg["RMS_THRESHOLD"]
         }
         
     except Exception as e:
@@ -197,24 +198,24 @@ def main():
         processed clips in PROCESSED_CLIPS_DIR
     """
     
-    if not PROCESSED_CLIPS_DIR.exists():
-        console.print(f"[red]error: processed clips directory not found: {PROCESSED_CLIPS_DIR}[/red]")
+    if not cfg["PROCESSED_CLIPS_DIR"].exists():
+        console.print(f'[red]error: processed clips directory not found: {cfg["PROCESSED_CLIPS_DIR"]}[/red]')
         return
     
     # find speaker directories
-    speaker_dirs = [d for d in PROCESSED_CLIPS_DIR.iterdir() if d.is_dir()]
+    speaker_dirs = [d for d in cfg["PROCESSED_CLIPS_DIR"].iterdir() if d.is_dir()]
     
     if not speaker_dirs:
-        console.print(f"[red]error: no speaker directories found in {PROCESSED_CLIPS_DIR}[/red]")
+        console.print(f'[red]error: no speaker directories found in {cfg["PROCESSED_CLIPS_DIR"]}[/red]')
         return
     
     console.rule("[bold green]starting clip filtering and balancing[/bold green]")
     console.print(f"[cyan]found {len(speaker_dirs)} speaker(s) to process[/cyan]")
-    console.print(f"[cyan]RMS threshold: {RMS_THRESHOLD}[/cyan]")
+    console.print(f'[cyan]RMS threshold: {cfg["RMS_THRESHOLD"]}[/cyan]')
     
     # step 1: filter clips by quality
     console.rule("[bold cyan]step 1: filtering clips by quality[/bold cyan]")
-    filtered_clips = filter_clips_by_quality(PROCESSED_CLIPS_DIR)
+    filtered_clips = filter_clips_by_quality(cfg["PROCESSED_CLIPS_DIR"])
     
     if not filtered_clips:
         console.print(f"[red]error: no clips passed quality filtering[/red]")
@@ -232,19 +233,19 @@ def main():
     console.rule("[bold cyan]step 3: copying balanced clips[/bold cyan]")
     
     # clean output directory if it exists
-    if BALANCED_CLIPS_DIR.exists():
-        console.print(f"[yellow]cleaning existing output directory: {BALANCED_CLIPS_DIR}[/yellow]")
-        shutil.rmtree(BALANCED_CLIPS_DIR)
+    if cfg["BALANCED_CLIPS_DIR"].exists():
+        console.print(f'[yellow]cleaning existing output directory: {cfg["BALANCED_CLIPS_DIR"]}[/yellow]')
+        shutil.rmtree(cfg["BALANCED_CLIPS_DIR"])
     
-    manifest_data = copy_balanced_clips(balanced_clips, BALANCED_CLIPS_DIR)
+    manifest_data = copy_balanced_clips(balanced_clips, cfg["BALANCED_CLIPS_DIR"])
     
     # save balanced manifest
     if manifest_data:
         console.print(f"[cyan]saving balanced manifest with {len(manifest_data)} clips...[/cyan]")
         df = pd.DataFrame(manifest_data)
-        BALANCED_MANIFEST_FILE.parent.mkdir(parents=True, exist_ok=True)
-        df.to_csv(BALANCED_MANIFEST_FILE, index=False)
-        console.print(f"[bold green]balanced manifest saved: {BALANCED_MANIFEST_FILE}[/bold green]")
+        cfg["BALANCED_MANIFEST_FILE"].parent.mkdir(parents=True, exist_ok=True)
+        df.to_csv(cfg["BALANCED_MANIFEST_FILE"], index=False)
+        console.print(f'[bold green]balanced manifest saved: {cfg["BALANCED_MANIFEST_FILE"]}[/bold green]')
     
     # final summary
     console.rule("[bold green]filtering and balancing complete![/bold green]")
@@ -256,8 +257,8 @@ def main():
     console.print(f"[bold green]speakers: {total_speakers}[/bold green]")
     console.print(f"[bold green]clips per speaker: {clips_per_speaker}[/bold green]")
     console.print(f"[bold green]total balanced clips: {total_balanced_clips}[/bold green]")
-    console.print(f"[bold green]balanced clips saved to: {BALANCED_CLIPS_DIR}[/bold green]")
-    console.print(f"[bold green]RMS threshold used: {RMS_THRESHOLD}[/bold green]")
+    console.print(f'[bold green]balanced clips saved to: {cfg["BALANCED_CLIPS_DIR"]}[/bold green]')
+    console.print(f'[bold green]RMS threshold used: {cfg["RMS_THRESHOLD"]}[/bold green]')
 
 
 if __name__ == "__main__":

@@ -9,13 +9,15 @@ import librosa
 from streamlit_advanced_audio import audix, WaveSurferOptions
 from utils import load_audio_data, SPEAKER_COLOURS
 from appPages.components import blank_lines
-from src.config import PROCESSED_CLIPS_DIR
+from config import load_config
+
+cfg = load_config()
 
 def page2():
     """Display the page for step 2-split-clips.py."""
     section_header("Audio Splitting", "Data splitting phase. Splits the cleaned audio recordings into smaller clips and stores them in `data/generated/processed_clips`.")
     
-    audio_data = load_audio_data(PROCESSED_CLIPS_DIR)
+    audio_data = load_audio_data(cfg["PROCESSED_CLIPS_DIR"])
 
     blank_lines(2)
     st.markdown(f"#### Split Data Summary")

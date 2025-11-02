@@ -1,13 +1,69 @@
-# TODO: Currently unused, this file should replace src/config.py in the future
+# # TODO: Currently unused, this file should replace src/config.py in the future
 
-raw_audio_dir: data/raw_audio
-cleaned_dir: data/cleaned_recordings
-clips_dir: data/processed_clips
-features_dir: data/features
-models_dir: models
-sample_rate: 16000
-clip_duration: 3.0
-min_clip_energy: 0.01
-n_mfcc: 13
-test_size: 0.2
-random_state: 42
+# raw_audio_dir: data/raw_audio
+# cleaned_dir: data/cleaned_recordings
+# clips_dir: data/processed_clips
+# features_dir: data/features
+# models_dir: models
+# sample_rate: 16000
+# clip_duration: 3.0
+# min_clip_energy: 0.01
+# n_mfcc: 13
+# test_size: 0.2
+# random_state: 42
+
+
+
+# All configuration parameters for LISA project
+
+# Base directories
+DATA_DIR: data
+GENERATED_DIR: data/generated
+
+# Input files
+PROMPTS_FILE: data/recording-prompts.json
+
+# Output Audio Data
+RAW_RECORDINGS_DIR: data/generated/raw_audio
+CLEANED_RECORDINGS_DIR: data/generated/cleaned_recordings
+PROCESSED_CLIPS_DIR: data/generated/processed_clips
+BALANCED_CLIPS_DIR: data/generated/filtered_balanced_clips
+DIARIZED_RECORDINGS_DIR: data/generated/diarized_recordings  # unused currently (for diarization)
+
+# CSV File Output Paths
+MANIFEST_FILE: data/generated/manifest.csv
+NEW_MANIFEST_FILE: data/generated/new_manifest.csv  # unused currently (for diarization)
+BALANCED_MANIFEST_FILE: data/generated/filtered_balanced_manifest.csv
+FEATURES_FILE: data/generated/vocal_features.csv
+
+# Model Output Paths
+MODEL_DIR: data/generated/model
+
+# Audio Processing Parameters
+# Step 0: Recording Parameters
+RECORDING_DURATION: 5        # Duration of each recording prompt in seconds
+COUNTDOWN_DURATION: 2        # Countdown duration before recording starts in seconds
+
+# Step 1: Cleaning Parameters
+SAMPLE_RATE: 16000            # Sample rate to resample audio to after recording
+
+# Step 2: Clip Processing Parameters
+CLIP_LEN: 2.0            # Duration of each audio clip in seconds
+STEP: 1.0                # Step size for overlapping clips in seconds
+
+# Step 3: Filtering Parameters
+# (Add your step 3 filtering parameters here if needed)
+
+AUDIO_FORMAT: "mp3"
+SAMPLE_RATE: 16000
+
+
+RMS_THRESHOLD: 0.006902
+
+RANDOM_SEED: 42 
+
+
+N_MFCC: 13
+HOP_LENGTH: 512
+N_FFT: 2048
+

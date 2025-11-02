@@ -3,9 +3,10 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 from appPages.components import section_header, blank_lines
-from src.config import FEATURES_FILE
+from config import load_config
 from utils import SPEAKER_COLOURS
 
+cfg = load_config()
 
 def page4():
     """Display the page for step 4-extract-features.py."""
@@ -23,12 +24,14 @@ def page4():
     # ==============================================================================
     # Load Features
     # ==============================================================================
-    if not FEATURES_FILE.exists():
-        st.warning(f"No features file found at `{FEATURES_FILE}`. Please run 4-extract-features.py.")
+    if not cfg["FEATURES_FILE"].exists():
+        st.warning(f'No features file found at `{cfg["FEATURES_FILE"]}`. Please run 4-extract-features.py.')
+
+
         return
 
     try:
-        df = pd.read_csv(FEATURES_FILE)
+        df = pd.read_csv(cfg["FEATURES_FILE"])
     except Exception as e:
         st.error(f"Error loading features: {str(e)}")
         return
