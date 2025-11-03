@@ -16,17 +16,20 @@ def page4():
     # ==============================================================================
     section_header(
         "Feature Extraction Overview",
-        "This stage computes MFCC-based features for each balanced clip, including means and standard deviations for both MFCCs and their deltas. "
-        "These features form the foundation for the speaker identification model trained in the next step. "
-        "You can use these plots to identify which MFCC features differ most between speakers. "
-        "Highly correlated features can be removed or reduced using PCA during model training."
+        "This page displays MFCC-based features for each balanced clip, " \
+        "including means and standard deviations for both MFCCs and their " \
+        "deltas. These features form the foundation for the speaker identification " \
+        "model trained in the next step. You can use these plots to identify which " \
+        "MFCC features differ most between speakers. Highly correlated features can " \
+        "be removed or reduced using PCA during model training."
     )
 
     # ==============================================================================
     # Load Features
     # ==============================================================================
     if not cfg["FEATURES_FILE"].exists():
-        st.warning(f'No features file found at `{cfg["FEATURES_FILE"]}`. Please run 4-extract-features.py.')
+        st.warning(f'No features file found at `{cfg["FEATURES_FILE"]}`. \
+                   Please run 4-extract-features.py.')
 
 
         return
@@ -187,8 +190,6 @@ def page4():
             step=10,
             help="Controls speed of optimization"
             )
-        
-    random_state = 42
 
     if st.button("Generate t-SNE Plot"):
         with st.spinner("Computing t-SNE embedding..."):
@@ -197,7 +198,7 @@ def page4():
                     n_components=2,
                     perplexity=perplexity,
                     learning_rate=learning_rate,
-                    random_state=random_state,
+                    random_state=cfg["RANDOM_SEED"],
                     init="pca"
                 )
                 tsne_result = tsne.fit_transform(df[numeric_cols])
