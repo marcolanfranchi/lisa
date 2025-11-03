@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
+from sklearn.manifold import TSNE
 from appPages.components import section_header, blank_lines
 from utils import SPEAKER_COLOURS
 from config import load_config
@@ -152,6 +153,76 @@ def page4():
             st.info("Speaker column not found in feature file.")
     else:
         st.info("Not enough numeric features to generate scatter plot.")
+
+    # ==============================================================================
+    # t-SNE Visualization
+    # ==============================================================================
+    blank_lines(2)
+    st.markdown("#### t-SNE Feature Embedding")
+
+    st.caption(
+        "t-SNE reduces the 52-dimensional feature space into 2D to reveal potential clustering "
+        "patterns or separability among speakers. "
+        "Note that results can vary slightly each run due to its stochastic nature."
+    )
+
+    option_cols = st.columns(2)
+
+    with option_cols[0]:
+        perplexity = st.slider(
+            "Perplexity",
+            min_value=5,
+            max_value=50,
+            value=30,
+            step=5,
+            help="Controls balance between local and global structure"
+            )
+    
+    with option_cols[1]:
+        learning_rate = st.slider(
+            "Learning Rate",
+            min_value=10,
+            max_value=500,
+            value=200,
+            step=10,
+            help="Controls speed of optimization"
+            )
+        
+    random_state = 42
+
+    if st.button("Generate t-SNE Plot"):
+        with st.spinner("Computing t-SNE embedding..."):
+            try:
+                tsne = TSNE(
+                    n_components=2,
+                    perplexity=perplexity,
+                    learning_rate=learning_rate,
+                    random_state=random_state,
+                    init="pca"
+                )
+                tsne_result = tsne.fit_transform(df[numeric_cols])
+                df_tsne = pd.DataFrame(tsne_result, columns=["TSNE-1", "TSNE-2"])
+                
+                if speaker_col:
+                    df_tsne[speaker_col] = df[speaker_col]
+
+                tsne_fig = px.scatter(
+                    df_tsne,
+                    x="TSNE-1",
+                    y="TSNE-2",
+                    color=speaker_col if speaker_col else None,
+                    color_discrete_map=SPEAKER_COLOURS if speaker_col else None,
+                    title="t-SNE Projection of Feature Space",
+                    opacity=0.85
+                )
+                tsne_fig.update_layout(
+                    showlegend=bool(speaker_col),
+                    height=600,
+                    margin=dict(l=40, r=40, t=60, b=40),
+                )
+                st.plotly_chart(tsne_fig, use_container_width=True)
+            except Exception as e:
+                st.error(f"Error computing t-SNE: {e}")
 
     # ==============================================================================
     # Data Preview
