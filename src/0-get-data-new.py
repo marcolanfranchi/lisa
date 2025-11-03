@@ -1,5 +1,4 @@
 # 0-get-data.py
-
 import os
 import json
 import dotenv
@@ -11,12 +10,7 @@ from pyannote.audio.pipelines.utils.hook import ProgressHook
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.progress import Progress
-from src.config import load_config
-#from config import DIARIZED_RECORDINGS_DIR, NEW_MANIFEST_FILE 
-
-# ---------------- CONFIG ----------------
-
-# ----------------------------------------
+from config import load_config
 
 # setup console
 console = Console()

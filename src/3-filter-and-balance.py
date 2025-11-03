@@ -1,5 +1,4 @@
 # src/3-filter-and-balance-data.py
-from .config import PROCESSED_CLIPS_DIR, BALANCED_CLIPS_DIR, BALANCED_MANIFEST_FILE
 import shutil
 import random
 import librosa
@@ -7,9 +6,7 @@ import pandas as pd
 import numpy as np
 from rich.console import Console
 from rich.progress import track
-from src.config import load_config
-
-
+from config import load_config
 
 # setup console
 console = Console()
@@ -17,8 +14,6 @@ console = Console()
 cfg = load_config()
 
 random.seed(cfg["RANDOM_SEED"])
-
-
 
 def analyze_clip_quality(file_path):
     """

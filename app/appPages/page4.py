@@ -3,8 +3,8 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 from appPages.components import section_header, blank_lines
-from config import load_config
 from utils import SPEAKER_COLOURS
+from config import load_config
 
 cfg = load_config()
 

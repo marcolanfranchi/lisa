@@ -1,5 +1,4 @@
 # src/2-split-clips.py
-from .config import CLEANED_RECORDINGS_DIR, PROCESSED_CLIPS_DIR, MANIFEST_FILE
 import uuid
 import librosa
 import soundfile as sf
@@ -7,9 +6,7 @@ import pandas as pd
 import shutil
 from rich.console import Console
 from rich.progress import track
-from src.config import load_config
-
-
+from config import load_config
 
 # setup console
 console = Console()

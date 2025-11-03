@@ -1,12 +1,10 @@
 # src/1-clean-audio.py
-from .config import RAW_RECORDINGS_DIR, CLEANED_RECORDINGS_DIR
 import librosa
 import soundfile as sf
 from rich.console import Console
 from rich.progress import track
 import noisereduce as nr
-from src.config import load_config
-
+from config import load_config
 
 # setup console
 console = Console()

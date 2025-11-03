@@ -1,13 +1,10 @@
 # src/4-extract-features-simple.py
-from .config import BALANCED_CLIPS_DIR, FEATURES_FILE
 import librosa
 import numpy as np
 import pandas as pd
 from rich.console import Console
 from rich.progress import track
-from src.config import load_config
-
-
+from config import load_config
 
 console = Console()
 

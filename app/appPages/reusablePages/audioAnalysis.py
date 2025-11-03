@@ -137,7 +137,7 @@ def show_audio_analysis_page(
     if version not in ("raw", "cleaned"):
         raise ValueError("version must be 'raw' or 'cleaned'")
 
-    # Get data path from config (assuming config.RAW_AUDIO_PATH etc.)
+    # Get data path from config
     if version == "raw":
         data_path = cfg["RAW_RECORDINGS_DIR"]
     elif version == "cleaned":

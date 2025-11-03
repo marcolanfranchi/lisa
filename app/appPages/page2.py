@@ -1,4 +1,4 @@
-from appPages.components import section_header, data_metrics
+from appPages.components import section_header
 import streamlit as st
 import pandas as pd
 import numpy as np

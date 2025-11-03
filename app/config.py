@@ -6,7 +6,6 @@ from typing import Any, Dict
 
 CONFIG_PATH = Path.cwd() / "config.yaml"
 
-
 def load_config(path: Path | str = CONFIG_PATH):
     with open(path, "r", encoding="utf-8") as f:
         cfg = yaml.safe_load(f)
@@ -16,4 +15,3 @@ def load_config(path: Path | str = CONFIG_PATH):
         if isinstance(v, str) and "/" in v:
             cfg[k] = Path(v).resolve()  # resolves relative to current working dir
     return cfg
-

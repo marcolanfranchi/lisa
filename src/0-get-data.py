@@ -1,5 +1,4 @@
 # src/0-get-data.py
-from .config import PROMPTS_FILE, RAW_RECORDINGS_DIR, MANIFEST_FILE
 import json
 import sounddevice as sd
 import soundfile as sf
@@ -7,9 +6,7 @@ from rich.console import Console
 from rich.prompt import Prompt
 from rich.progress import Progress
 import time
-from src.config import load_config
-
-
+from config import load_config
 
 console = Console()
 

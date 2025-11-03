@@ -1,16 +1,12 @@
 # src/5-train-model.py
-from .config import FEATURES_FILE, MODEL_DIR
 import pandas as pd
 from rich.console import Console
-from rich.progress import track
-
 import pickle
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score, classification_report
-
-from src.config import load_config
+from config import load_config
 
 console = Console()
 

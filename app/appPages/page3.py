@@ -1,11 +1,8 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 import os
 import random
-import librosa
 import plotly.express as px
-import plotly.graph_objects as go
 from streamlit_advanced_audio import audix, WaveSurferOptions
 from appPages.components import section_header, blank_lines
 from utils import SPEAKER_COLOURS, load_audio_data

@@ -1,15 +1,14 @@
 # run-pipeline.py
-
 import importlib
 from rich.console import Console
 
 # Import the files for each step
-step0 = importlib.import_module("src.0-get-data")
-step1 = importlib.import_module("src.1-clean-audio")
-step2 = importlib.import_module("src.2-split-clips")
-step3 = importlib.import_module("src.3-filter-and-balance")
-step4 = importlib.import_module("src.4-extract-features")
-step5 = importlib.import_module("src.5-train-model")
+step0 = importlib.import_module("0-get-data")
+step1 = importlib.import_module("1-clean-audio")
+step2 = importlib.import_module("2-split-clips")
+step3 = importlib.import_module("3-filter-and-balance")
+step4 = importlib.import_module("4-extract-features")
+step5 = importlib.import_module("5-train-model")
 
 # setup console
 console = Console()
