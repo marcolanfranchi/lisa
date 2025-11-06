@@ -70,7 +70,13 @@ def train_knn_model(feature_manifest, test_size=0.25, k=5):
     X_scaled = scaler.fit_transform(X)
 
     # Split train/test
-    X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=test_size, random_state=42, stratify=y)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X_scaled,
+        y,
+        test_size=test_size,
+        random_state=cfg["RANDOM_SEED"],
+        stratify=y
+        )
 
     # Train KNN
     knn_model = KNeighborsClassifier(n_neighbors=k)
