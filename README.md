@@ -161,6 +161,6 @@ This will run the main Streamlit/Python interface at [http://localhost:8501](htt
 ### Run the Model Demo
 
 ```bash
-python3 app/model.py
+python3 app/demo.py
 ```
 This will run the Gradio/Python model demo (at [http://localhost:7860](http://localhost:7860)), which will be displayed in the home page of the Streamlit app as an embedded frame.
