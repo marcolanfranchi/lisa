@@ -38,8 +38,7 @@ def main():
     except FileNotFoundError:
         print("Error: 'images/ascii.txt' not found.")
 
-    # console.rule("[bold red]Step 0/5: Get Data")
-    # step0.main()
+    # Skips step 0 as raw data is assumed to be present
     
     console.rule("[bold red]Step 1/5: Clean Audio")
     step1.main()

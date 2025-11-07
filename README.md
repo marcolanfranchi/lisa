@@ -1,6 +1,6 @@
 # L.I.S.A. (Labeled Identification of Speech Audio)
 
-An end-to-end machine learning pipeline that classifies a speaker by their voice.
+An end-to-end supervised machine learning pipeline that produces a model capable of predicting who's speaking from a short clip of speech audio with high accuracy.
 
 ## Overview
 
@@ -13,6 +13,18 @@ An end-to-end machine learning pipeline that classifies a speaker by their voice
 ```
 speaker-recognition/
 │
+├── app/                        # Streamlit app containing model demo + data visualizations
+│ └── appPages/                 # ...
+│   └── reusablePages/          # ...
+│   └── components.py           # ...
+│   └── homePage.py             # ...
+│   └── page0.py                # ...
+│   └── page<page_number>.py    # ...
+│ └── app.py                    # ...
+│ └── config.py                 # ...
+│ └── demo.py                   # ...
+│ └── utils.py                  # ...
+|
 ├── data/                       # Data
 │ └── generated/                # Generated dataset of voice recordings
 │   └── raw_recordings/         # Folders for each speaker with raw recordings
@@ -21,12 +33,22 @@ speaker-recognition/
 │   └── manifest.csv            # Table describing the dataset files
 │ └── recording-prompts.json    # Voice recording instructions
 │
+├── models/                     # Stored model .pkl files
+│ └── lisa_knn.pkl              # ...
+│ └── ...                       # ...
+│ └── ...                       # ...
+│ └── ...                       # ...
+|
 ├── src/                        # Source code
 │ └── 0-get-data.py             # Starts the data generation process
-│ └── 1-clean-audio.py          # 
-│ └── 2-split-clips.py          # 
-│ └── 3-extract-features.py     # 
+│ └── 1-clean-audio.py          # Cleans raw audio (mp3/wav)
+│ └── 2-split-clips.py          # ...
+│ └── 3-filter-and-balance.py   # ...
+│ └── 4-extract-features.py     # ...
+│ └── config.py                 # ...
+│ └── run-pipeline.py           # ...
 │
+├── config.yaml
 ├── README.md
 ├── requirements.txt
 └── .gitignore
@@ -61,7 +83,7 @@ pip install -r requirements.txt
 This step should be performed for 3–5 people to build a multi-speaker dataset.
 
 ```bash
-python3 -m src.0-get-data.py
+python3 src/0-get-data.py
 ```
 <details>
 <summary>What this script does:</summary>
@@ -77,7 +99,7 @@ python3 -m src.0-get-data.py
 ### 1. Clean/normalize audio levels
 
 ```bash
-python3 -m src.1-clean-audio
+python3 src/1-clean-audio
 ```
 <details> <summary>What this script does</summary>
 - Normalizes volume levels across clips.
@@ -88,7 +110,7 @@ python3 -m src.1-clean-audio
 
 ### 2. Split Audio Clips
 ```bash
-python3 -m src.2-split-clips
+python3 src/2-split-clips
 ```
 <details> <summary>What this script does</summary>
 - Splits audio clips into fixed length clips with 50% overlap per clip.
@@ -98,7 +120,7 @@ python3 -m src.2-split-clips
 
 ### 3. Filter & Balance Audio Clips
 ```bash
-python3 -m src.3-filter-and-balance
+python3 src/3-filter-and-balance
 ```
 <details> <summary>What this script does</summary>
 - ...
@@ -107,7 +129,7 @@ python3 -m src.3-filter-and-balance
 
 ### 4. Extract Features
 ```bash
-python3 -m src.4-extract-features
+python3 src/4-extract-features
 ```
 <details> <summary>What this script does</summary>
 - ...
@@ -117,7 +139,7 @@ python3 -m src.4-extract-features
 
 ### 5. Train Model
 ```bash
-python3 -m src.5-train-model
+python3 src/5-train-model
 ```
 <details> <summary>What this script does</summary>
 - ...
@@ -141,4 +163,4 @@ This will run the main Streamlit/Python interface at [http://localhost:8501](htt
 ```bash
 python3 app/model.py
 ```
-This will run the Gradio/Python model demo (at [http://localhost:7860](http://localhost:7860)), which will be displayed in the home page of the Streamlit app as a compoent.
+This will run the Gradio/Python model demo (at [http://localhost:7860](http://localhost:7860)), which will be displayed in the home page of the Streamlit app as an embedded frame.

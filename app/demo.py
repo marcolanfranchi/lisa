@@ -27,7 +27,7 @@ step4 = importlib.import_module("src.4-extract-features")
 cfg = load_config()
 
 # === Load trained model and scaler ===
-with open(cfg["MODEL_DIR"] / "speaker_recognition_knn.pkl", "rb") as f:
+with open(cfg["MODEL_DIR"] / "lisa_knn.pkl", "rb") as f:
     model = pickle.load(f)
 with open(cfg["MODEL_DIR"] / "scaler.pkl", "rb") as f:
     scaler = pickle.load(f)
@@ -396,7 +396,7 @@ with gr.Blocks(
 
 if __name__ == "__main__":
     print("[INFO] Starting Gradio demo...")
-    print(f"[INFO] Model loaded: {cfg['MODEL_DIR'] / 'speaker_recognition_knn.pkl'}")
+    print(f"[INFO] Model loaded: {cfg['MODEL_DIR'] / 'lisa_knn.pkl'}")
     print(f"[INFO] Processing: {CLIP_LENGTH}s clips every {PROCESSING_INTERVAL}s")
     
     demo.launch(

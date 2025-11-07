@@ -27,6 +27,7 @@ MODEL_DIR: data/generated/model
 # Step 0: Recording Parameters
 RECORDING_DURATION: 60 # Duration of each recording prompt in seconds
 COUNTDOWN_DURATION: 10 # Countdown duration before recording starts in seconds
+AUDIO_FORMAT: mp3 # Only used for diarization step (currently unused)
 
 # Step 1: Cleaning Parameters
 SAMPLE_RATE: 16000 # Sample rate to resample audio to after recording
@@ -36,7 +37,6 @@ CLIP_LEN: 2.0 # Duration of each audio clip in seconds
 STEP: 1.0 # Step size for overlapping clips in seconds
 
 # Step 3: Filtering Parameters
-AUDIO_FORMAT: mp3
 RMS_THRESHOLD: 0.006
 RANDOM_SEED: 42
 

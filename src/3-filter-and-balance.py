@@ -128,9 +128,9 @@ def balance_dataset(filtered_clips):
     return balanced_clips
 
 
-def copy_balanced_clips(balanced_clips, output_dir):
+def save_balanced_clips(balanced_clips, output_dir):
     """
-    Copy balanced clips to the output directory and create manifest.
+    Save balanced clips to the output directory and create manifest csv.
     
     Args:
         balanced_clips: dict with balanced clips per speaker
@@ -146,14 +146,14 @@ def copy_balanced_clips(balanced_clips, output_dir):
     output_dir.mkdir(parents=True, exist_ok=True)
     
     for speaker_id, clips in balanced_clips.items():
-        console.print(f"[cyan]copying {len(clips)} clips for {speaker_id}[/cyan]")
+        console.print(f"[cyan]saving {len(clips)} clips for {speaker_id}[/cyan]")
         
         # create speaker output directory
         speaker_output_dir = output_dir / speaker_id
         speaker_output_dir.mkdir(exist_ok=True)
         
-        # copy each clip
-        for clip_path, quality in track(clips, description=f"copying {speaker_id} clips"):
+        # save each clip
+        for clip_path, quality in track(clips, description=f"saving {speaker_id} clips"):
             # generate new filename to avoid conflicts
             output_path = speaker_output_dir / clip_path.name
             
@@ -232,7 +232,7 @@ def main():
         console.print(f'[yellow]cleaning existing output directory: {cfg["BALANCED_CLIPS_DIR"]}[/yellow]')
         shutil.rmtree(cfg["BALANCED_CLIPS_DIR"])
     
-    manifest_data = copy_balanced_clips(balanced_clips, cfg["BALANCED_CLIPS_DIR"])
+    manifest_data = save_balanced_clips(balanced_clips, cfg["BALANCED_CLIPS_DIR"])
     
     # save balanced manifest
     if manifest_data:

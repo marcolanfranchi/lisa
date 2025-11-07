@@ -39,7 +39,7 @@ def main():
     
     # save trained model and scaler
     cfg["MODEL_DIR"].mkdir(parents=True, exist_ok=True)
-    model_path = cfg["MODEL_DIR"] / "speaker_recognition_knn.pkl"
+    model_path = cfg["MODEL_DIR"] / "lisa_knn.pkl"
     scaler_path = cfg["MODEL_DIR"] / "scaler.pkl"
     with open(model_path, 'wb') as f:
         pickle.dump(knn_model, f)
