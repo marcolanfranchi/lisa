@@ -2,6 +2,7 @@
 import pandas as pd
 from rich.console import Console
 import pickle
+from pathlib import Path
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.neighbors import KNeighborsClassifier
@@ -10,6 +11,9 @@ from config import load_config
 
 console = Console()
 cfg = load_config()
+
+# Ensure data folder exists for saving CSV
+(Path(__file__).parent.parent / "data").mkdir(parents=True, exist_ok=True)
 
 def main():
     """Main function to train speaker recognition model using KNN."""
@@ -28,14 +32,14 @@ def main():
         console.print(f"[red]error: feature manifest is empty[/red]")
         return
     
-    # train KNN model with best k
-    console.rule("[bold cyan]training speaker recognition model (KNN)[/bold cyan]")
+    # --- Step 1: Train final model with best k=6 ---
+    console.rule("[bold cyan]training final KNN model with k=6[/bold cyan]")
     knn_model, scaler = train_knn_model(feature_manifest, k=6)
-    
+
     if knn_model is None:
         console.print(f"[red]error: model training failed[/red]")
         return
-    
+
     # save trained model and scaler
     cfg["MODEL_DIR"].mkdir(parents=True, exist_ok=True)
     model_path = cfg["MODEL_DIR"] / "lisa_knn.pkl"
@@ -47,41 +51,19 @@ def main():
     
     console.print(f"[green]model training complete! saved KNN model to {model_path}[/green]")
 
-    # evaluate with 10-fold cross-validation
-    #evaluate_knn_cv(feature_manifest, k=6, folds=10)
-    #BY TRIAL AN ERROR, I FOUND THAT K=6 GIVES THE BEST RESULTS FOR THIS DATASET
-    '''
-    training KNN model with k=6...
-    Validation Accuracy: 99.11%
-    Classification report:
-              precision    recall  f1-score   support
-
-     georgii       1.00      0.96      0.98        56
-       kolya       1.00      1.00      1.00        56
-       marco       0.98      1.00      0.99        56
-        vova       0.98      1.00      0.99        56
-
-    accuracy                               0.99       224
-    macro avg          0.99      0.99      0.99       224
-    weighted avg       0.99      0.99      0.99       224
-
-    
-    '''
+    # --- Step 2: Cross-validation analysis for multiple k/folds ---
+    console.rule("[bold magenta]cross-validation analysis for multiple k/folds[/bold magenta]")
+    cv_results_path = Path(__file__).parent.parent / "data" / "knn_cv_results.csv"
+    run_knn_cross_validation(feature_manifest, cv_results_path)
 
 
-def train_knn_model(feature_manifest, test_size=0.25, k=4):
+def train_knn_model(feature_manifest, test_size=0.25, k=6):
     """Train a KNN speaker recognition model using best k.
-    
-    Args:
-        feature_manifest (pd.DataFrame): DataFrame with MFCC features + speaker_id
-        test_size (float): fraction of data for validation
-        k (int): number of neighbors
     
     Returns:
         knn_model: trained KNeighborsClassifier
         scaler: StandardScaler used to scale features
     """
-    # Extract features (X) and labels (y)
     X = feature_manifest.drop(['speaker_id', 'clip_filename', 'duration'], axis=1).values
     y = feature_manifest['speaker_id'].values
 
@@ -113,21 +95,36 @@ def train_knn_model(feature_manifest, test_size=0.25, k=4):
     return knn_model, scaler
 
 
-def evaluate_knn_cv(feature_manifest, k=4, folds=10):
-    """Perform k-fold cross-validation with KNN and print mean accuracy."""
-    console.rule(f"[bold blue]{folds}-fold cross-validation with k={k}[/bold blue]")
-
+def run_knn_cross_validation(feature_manifest, save_path):
+    """Run cross-validation for multiple k values and fold counts and save results."""
     X = feature_manifest.drop(['speaker_id', 'clip_filename', 'duration'], axis=1).values
     y = feature_manifest['speaker_id'].values
 
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
 
-    knn = KNeighborsClassifier(n_neighbors=k)
-    scores = cross_val_score(knn, X_scaled, y, cv=folds, scoring='accuracy')
-    mean_acc = scores.mean()
+    k_values = range(1, 16)  # evaluate k = 1..15
+    fold_values = [3, 5, 10]
 
-    console.print(f"[green]{folds}-fold mean accuracy: {mean_acc*100:.2f}%[/green]")
+    results = []
+
+    for folds in fold_values:
+        console.print(f"\n[bold magenta]{folds}-fold CV[/bold magenta]")
+        for k in k_values:
+            knn = KNeighborsClassifier(n_neighbors=k)
+            scores = cross_val_score(knn, X_scaled, y, cv=folds, scoring='accuracy')
+            mean_acc = scores.mean()
+            console.print(f"k={k:2d} | mean accuracy: {mean_acc*100:.2f}%")
+            results.append({
+                "k": k,
+                "folds": folds,
+                "mean_accuracy": mean_acc
+            })
+
+    # Save results to CSV
+    df_results = pd.DataFrame(results)
+    df_results.to_csv(save_path, index=False)
+    console.print(f"\n[green]Cross-validation results saved to {save_path}[/green]")
 
 
 if __name__ == "__main__":
