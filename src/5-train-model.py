@@ -118,7 +118,7 @@ def run_knn_cross_validation(feature_manifest, save_path):
             results.append({
                 "k": k,
                 "folds": folds,
-                "mean_accuracy": mean_acc
+                "mean_accuracy": f"{mean_acc*100:.2f}%"
             })
 
     # Save results to CSV
