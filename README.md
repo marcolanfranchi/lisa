@@ -64,10 +64,15 @@ cd speaker-recognition
 ```
 
 ### 2. Create and activate environment
-
+MAC
 ```bash
 python3 -m venv venv
 source venv/bin/activate
+```
+WINDOWS
+```bash
+python3 -m venv venv
+venv\Scripts\Activate.ps1
 ```
 
 ### 3. Install dependencies
