@@ -119,7 +119,7 @@ def balance_dataset(filtered_clips):
         if len(clips) >= min_clips:
             # randomly sample clips
             balanced_clips[speaker_id] = random.sample(clips, min_clips)
-            console.print(f"[green]sampled {min_clips} clips for {speaker_id}[/green]")
+            console.print(f"[green]randomly sampled {min_clips} clips for {speaker_id}[/green]")
         else:
             # this shouldn't happen given our min_clips calculation, but just in case
             balanced_clips[speaker_id] = clips
@@ -172,7 +172,7 @@ def save_balanced_clips(balanced_clips, output_dir):
                 "balanced": True
             })
     
-    console.print(f"[green]copied {total_copied} total clips[/green]")
+    console.print(f"[green]saved {total_copied} total clips[/green]")
     return manifest_data
 
 
@@ -205,7 +205,8 @@ def main():
         return
     
     console.rule("[bold green]starting clip filtering and balancing[/bold green]")
-    console.print(f"[cyan]found {len(speaker_dirs)} speaker(s) to process[/cyan]")
+    console.print(f"[cyan]found {len(speaker_dirs)} speaker(s) with split clips to filter \
+                  and balance[/cyan]")
     console.print(f'[cyan]RMS threshold: {cfg["RMS_THRESHOLD"]}[/cyan]')
     
     # step 1: filter clips by quality
@@ -229,7 +230,7 @@ def main():
     
     # clean output directory if it exists
     if cfg["BALANCED_CLIPS_DIR"].exists():
-        console.print(f'[yellow]cleaning existing output directory: {cfg["BALANCED_CLIPS_DIR"]}[/yellow]')
+        console.print(f'[yellow]clearing existing filtered/balanced clips directory: {cfg["BALANCED_CLIPS_DIR"]}[/yellow]')
         shutil.rmtree(cfg["BALANCED_CLIPS_DIR"])
     
     manifest_data = save_balanced_clips(balanced_clips, cfg["BALANCED_CLIPS_DIR"])

@@ -2,9 +2,9 @@
 import librosa
 import soundfile as sf
 from rich.console import Console
-from rich.progress import track
 import noisereduce as nr
 from config import load_config
+from rich.progress import Progress, BarColumn, TimeElapsedColumn, TimeRemainingColumn, TextColumn
 
 # setup console
 console = Console()
@@ -40,7 +40,6 @@ def clean_audio(input_path, output_path):
         
         # save cleaned audio
         sf.write(output_path, y_filtered, sr)
-        console.print(f"[green]cleaned audio saved: {output_path}[/green]")
         return True
         
     except Exception as e:
@@ -76,7 +75,7 @@ def main():
         console.print(f'[red]error: no speaker directories found in {cfg["RAW_RECORDINGS_DIR"]}[/red]')
         return
     
-    console.print(f"[cyan]found {len(speaker_dirs)} speaker(s) to process[/cyan]")
+    console.print(f"[cyan]{len(speaker_dirs)} speaker(s) to process: {', '.join([d.name for d in speaker_dirs])}[/cyan]")
     
     total_files = 0
     cleaned_files = 0
@@ -84,32 +83,45 @@ def main():
     # process each speaker
     for speaker_dir in speaker_dirs:
         speaker_id = speaker_dir.name
-        console.rule(f"[bold green]processing speaker: {speaker_id}[/bold green]")
-        
+        console.rule(f"[bold green]Cleaning audio for speaker: {speaker_id}[/bold green]")
+
         # create cleaned directory for this speaker
         cleaned_speaker_dir = cfg["CLEANED_RECORDINGS_DIR"] / speaker_id
         cleaned_speaker_dir.mkdir(parents=True, exist_ok=True)
-        
+
         # find all wav files for this speaker
         wav_files = list(speaker_dir.glob("*.wav"))
-        
+
         if not wav_files:
             console.print(f"[yellow]no .wav files found for {speaker_id}[/yellow]")
             continue
-        
-        console.print(f"[cyan]cleaning {len(wav_files)} recordings for {speaker_id}[/cyan]")
-        
-        # clean each file with progress tracking
-        for wav_file in track(wav_files, description="cleaning audio files"):
-            total_files += 1
-            output_path = cleaned_speaker_dir / wav_file.name
-            
-            if clean_audio(wav_file, output_path):
-                cleaned_files += 1
-    
+
+        console.print(f"[cyan]found {len(wav_files)} raw recordings for {speaker_id}[/cyan]")
+
+        # single progress bar for this speaker that updates for every audio file
+        with Progress(
+            TextColumn("[progress.description]{task.description}"),
+            BarColumn(),
+            "[progress.percentage]{task.percentage:>3.0f}%",
+            TimeElapsedColumn(),
+            TimeRemainingColumn(),
+            console=console,
+            transient=False,
+        ) as progress:
+            task = progress.add_task(f"cleaning audio files for {speaker_id}", total=len(wav_files))
+
+            for wav_file in wav_files:
+                total_files += 1
+                output_path = cleaned_speaker_dir / wav_file.name
+
+                if clean_audio(wav_file, output_path):
+                    cleaned_files += 1
+
+                progress.advance(task)
+
     # summary
-    console.rule("[bold green]cleaning complete![/bold green]")
-    console.print(f"[bold green]processed {cleaned_files}/{total_files} files successfully[/bold green]")
+    console.rule("[bold green] audio cleaning complete [/bold green]")
+    console.print(f"[bold green]cleaned {cleaned_files}/{total_files} files successfully[/bold green]")
     console.print(f'[bold green]cleaned recordings saved to: {cfg["CLEANED_RECORDINGS_DIR"]}[/bold green]')
 
     

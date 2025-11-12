@@ -5,7 +5,7 @@ import soundfile as sf
 import pandas as pd
 import shutil
 from rich.console import Console
-from rich.progress import track
+from rich.progress import Progress, BarColumn, TimeElapsedColumn, TimeRemainingColumn, TextColumn
 from config import load_config
 
 # setup console
@@ -60,7 +60,6 @@ def split_audio(file_path, speaker_id, script_id):
                 "duration": len(clip) / sr
             })
 
-        console.print(f"[green]split {file_path.name} into {len(clips)} clips[/green]")
         return clips
         
     except Exception as e:
@@ -86,17 +85,20 @@ def main():
     """
 
     if not cfg["CLEANED_RECORDINGS_DIR"].exists():
-        console.print(f'[red]error: cleaned recordings directory not found: {cfg["CLEANED_RECORDINGS_DIR"]}[/red]')
+        console.print(f'[red]error: cleaned recordings directory not found: \
+                      {cfg["CLEANED_RECORDINGS_DIR"]}[/red]')
         return
     
     # find all speaker directories
     speaker_dirs = [d for d in cfg["CLEANED_RECORDINGS_DIR"].iterdir() if d.is_dir()]
     
     if not speaker_dirs:
-        console.print(f'[red]error: no speaker directories found in {cfg["CLEANED_RECORDINGS_DIR"]}[/red]')
+        console.print(f'[red]error: no speaker directories found in \
+                      {cfg["CLEANED_RECORDINGS_DIR"]}[/red]')
         return
     
-    console.print(f"[cyan]found {len(speaker_dirs)} speaker(s) to process[/cyan]")
+    console.print(f"[cyan]found {len(speaker_dirs)} speaker(s) with cleaned recordings to process: \
+                  {', '.join([d.name for d in speaker_dirs])}[/cyan]")
     
     all_clips = []
     total_files = 0
@@ -105,15 +107,15 @@ def main():
     # process each speaker
     for speaker_dir in speaker_dirs:
 
+        speaker_id = speaker_dir.name
+        console.rule(f"[bold green]Splitting clips for speaker: {speaker_id}[/bold green]")
+        
         # remove existing processed clips for this speaker to avoid duplicates
         processed_speaker_dir = cfg["PROCESSED_CLIPS_DIR"] / speaker_dir.name
         if processed_speaker_dir.exists():
-            console.print(f"[yellow]cleaning existing output directory: {processed_speaker_dir}[/yellow]")
+            console.print(f"[yellow]clearing existing split clips directory: {processed_speaker_dir}[/yellow]")
             shutil.rmtree(processed_speaker_dir)
 
-        speaker_id = speaker_dir.name
-        console.rule(f"[bold green]processing speaker: {speaker_id}[/bold green]")
-        
         # find all wav files for this speaker
         wav_files = list(speaker_dir.glob("*.wav"))
         
@@ -121,24 +123,40 @@ def main():
             console.print(f"[yellow]no .wav files found for {speaker_id}[/yellow]")
             continue
         
-        console.print(f"[cyan]splitting {len(wav_files)} recordings for {speaker_id}[/cyan]")
+        console.print(f"[cyan]found {len(wav_files)} cleaned recordings for {speaker_id}[/cyan]")
         
-        # split each file with progress tracking
-        for wav_file in track(wav_files, description="splitting audio files"):
-            total_files += 1
+        with Progress(
+            TextColumn("[progress.description]{task.description}"),
+            BarColumn(),
+            "[progress.percentage]{task.percentage:>3.0f}%",
+            TimeElapsedColumn(),
+            TimeRemainingColumn(),
+            console=console,
+            transient=False,
+        ) as progress:
+            task = progress.add_task(f"splitting audio files for {speaker_id}", total=len(wav_files))
+            # split each file with progress tracking
+            speaker_clips = 0
+            for wav_file in wav_files:
+                total_files += 1
+                
+                # extract script_id from filename (remove .wav extension)
+                script_id = wav_file.stem
             
-            # extract script_id from filename (remove .wav extension)
-            script_id = wav_file.stem
+                # split audio into clips
+                clips = split_audio(wav_file, speaker_id, script_id)
+                progress.advance(task)
+                all_clips.extend(clips)
+                total_clips += len(clips)
+                speaker_clips += len(clips)
             
-            # split audio into clips
-            clips = split_audio(wav_file, speaker_id, script_id)
-            all_clips.extend(clips)
-            total_clips += len(clips)
-            
-            if clips:
-                console.print(f"[green]  {wav_file.name}: {len(clips)} clips[/green]")
-            else:
-                console.print(f"[yellow]  {wav_file.name}: 0 clips [/yellow]")
+                if not clips:
+                    console.print(f"[yellow]  {wav_file.name}: 0 clips [/yellow]")
+
+            # print total clips for this speaker
+            console.print(f"[cyan]  {speaker_id}: generated {speaker_clips} clips from {len(wav_files)} files[/cyan")
+
+    console.rule(f"[bold green]Done splitting clips[/bold green]")
     
     # save manifest file
     if all_clips:
@@ -151,7 +169,6 @@ def main():
         console.print(f"[red]no clips generated, manifest not created[/red]")
     
     # summary
-    console.rule("[bold green]splitting complete![/bold green]")
     console.print(f"[bold green]processed {total_files} files into {total_clips} clips[/bold green]")
     console.print(f'[bold green]processed clips saved to: {cfg["PROCESSED_CLIPS_DIR"]}[/bold green]')
 
