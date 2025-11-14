@@ -53,9 +53,7 @@ def main():
 
     # --- Step 2: Cross-validation analysis for multiple k/folds ---
     console.rule("[bold magenta]cross-validation analysis for multiple k/folds[/bold magenta]")
-    cv_results_path = Path(__file__).parent.parent / "data" / "knn_cv_results.csv"
-    run_knn_cross_validation(feature_manifest, cv_results_path)
-
+    run_knn_cross_validation(feature_manifest, cfg["KNN_RESULTS_FILE"])
 
 def train_knn_model(feature_manifest, test_size=0.25, k=6):
     """Train a KNN speaker recognition model using best k.

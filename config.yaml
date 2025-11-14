@@ -19,6 +19,7 @@ MANIFEST_FILE: data/generated/manifest.csv
 NEW_MANIFEST_FILE: data/generated/new_manifest.csv # unused currently (for diarization)
 BALANCED_MANIFEST_FILE: data/generated/filtered_balanced_manifest.csv
 FEATURES_FILE: data/generated/vocal_features.csv
+KNN_RESULTS_FILE: data/knn_cv_results.csv
 
 # Model Output Paths
 MODEL_DIR: data/generated/model
