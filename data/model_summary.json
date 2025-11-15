@@ -1,0 +1,16 @@
+{
+  "best_model_name": "svc",
+  "best_model_path": "data/generated/model/svc.pkl",
+  "best_model_test_accuracy": 0.9479553903345725,
+  "timestamp_utc": "2025-11-15T17:25:00.707935Z",
+  "num_samples": 896,
+  "num_features": 52,
+  "models_evaluated": [
+    "svc",
+    "logistic_regression",
+    "random_forest",
+    "gradient_boosting",
+    "ada_boost",
+    "knn_k12"
+  ]
+}
