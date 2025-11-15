@@ -7,7 +7,6 @@ import gradio as gr
 import speech_recognition as sr
 import numpy as np
 import io
-import os
 import sys
 import wave
 import time
@@ -19,25 +18,25 @@ import threading
 from queue import Queue
 from config import load_config
 
-# === Import your feature extraction + cleaning utilities ===
+# Import feature extraction + cleaning utilities
 root_dir = Path(__file__).resolve().parent.parent
 sys.path.append(str(root_dir))
 step1 = importlib.import_module("src.1-clean-audio")
 step4 = importlib.import_module("src.4-extract-features")
 cfg = load_config()
 
-# === Load trained model and scaler ===
-with open(cfg["MODEL_DIR"] / "lisa_knn.pkl", "rb") as f:
+# Load trained model and scaler
+with open(cfg["MODEL_DIR"] / "gradient_boosting.pkl", "rb") as f:
     model = pickle.load(f)
 with open(cfg["MODEL_DIR"] / "scaler.pkl", "rb") as f:
     scaler = pickle.load(f)
 
-# === Speech recognizer ===
+# Speech recognizer
 recognizer = sr.Recognizer()
 recognizer.energy_threshold = 300
 recognizer.dynamic_energy_threshold = True
 
-# === Global state class to avoid variable issues ===
+# Global state class to avoid variable issues
 class AudioProcessingState:
     def __init__(self):
         self.buffer = None
@@ -55,21 +54,21 @@ class AudioProcessingState:
 # Create global state instance
 state = AudioProcessingState()
 
-# === Configuration ===
+# Config
 TARGET_SAMPLE_RATE = 16000
-CLIP_LENGTH = 2.0
-PROCESSING_INTERVAL = 1
+CLIP_LENGTH = 2.5
+PROCESSING_INTERVAL = 1.25
 SILENCE_THRESHOLD = 25
 MIN_SPEECH_DURATION = 0.3
 
-# === Prediction class ===
+# Prediction class
 class PredictionWithConfidence:
     def __init__(self, speaker, confidence, timestamp):
         self.speaker = speaker
         self.confidence = confidence
         self.timestamp = timestamp
 
-# === Helper functions ===
+# Helper functions
 def has_speech(audio_np: np.ndarray, threshold=SILENCE_THRESHOLD):
     """Check if audio segment contains speech based on RMS energy"""
     rms = np.sqrt(np.mean(audio_np**2))
@@ -109,6 +108,8 @@ def identify_speaker_with_confidence(audio_np: np.ndarray, sample_rate: int):
 
         X = np.array([v for k, v in features.items() if "mfcc" in k]).reshape(1, -1)
         X_scaled = scaler.transform(X)
+        print(f"[DEBUG] Features shape: {X_scaled.shape}")
+        print(f"[DEBUG] Features sample: {X_scaled[0][:5]} ...")
         
         pred = model.predict(X_scaled)[0]
         
@@ -116,7 +117,7 @@ def identify_speaker_with_confidence(audio_np: np.ndarray, sample_rate: int):
             proba = model.predict_proba(X_scaled)[0]
             confidence = float(np.max(proba))
         except:
-            confidence = 0.7
+            confidence = 0.25  # Default confidence if not available
 
         proc_time = (time.time() - start_time) * 1000
         state.processing_times.append(proc_time)
@@ -153,12 +154,15 @@ def get_smoothed_prediction():
     return best_speaker, confidence
 
 def prediction_worker():
-    """Background worker to process speaker predictions without blocking UI"""
+    """
+    Background worker to process speaker predictions.
+    """
     while True:
         try:
             audio_data, sample_rate, timestamp = state.prediction_queue.get(timeout=1)
             
             if audio_data is None:
+                print(f"[INFO] Received None audio data at {timestamp:.1f}s, stopping prediction worker.")
                 break
                 
             prediction, confidence = identify_speaker_with_confidence(audio_data, sample_rate)
@@ -166,13 +170,29 @@ def prediction_worker():
             if prediction:
                 pred_obj = PredictionWithConfidence(prediction, confidence, timestamp)
                 state.recent_predictions.append(pred_obj)
-                state.current_speaker, state.current_confidence = get_smoothed_prediction()
+
+                # === NEW LOGIC: only update on strong predictions ===
+                CONF_THRESHOLD = 0.25
+                if confidence >= CONF_THRESHOLD:
+                    state.current_speaker = prediction
+                    state.current_confidence = confidence
+                else:
+                    print(f"[INFO] Weak confidence ({confidence:.2%}) — keeping {state.current_speaker}")
+
+                print(f"[PREDICTION @ {timestamp:.1f}s] "
+                    f"Raw: {prediction} ({confidence:.2%}) | "
+                    f"Displayed: {state.current_speaker} ({state.current_confidence:.2%})")
                 
-                avg_proc_time = np.mean(state.processing_times) if state.processing_times else 0
+                # # state.current_speaker, state.current_confidence = get_smoothed_prediction() TODO: add back smoothing after testing
+                # state.current_speaker = prediction
+                # state.current_confidence = confidence
+                
                 print(f"[PREDICTION @ {timestamp:.1f}s] "
                       f"Raw: {prediction} ({confidence:.2%}) | "
-                      f"Smoothed: {state.current_speaker} ({state.current_confidence:.2%}) | "
-                      f"Proc: {avg_proc_time:.0f}ms")
+                      f"Smoothed: {state.current_speaker} ({state.current_confidence:.2%})")
+
+            else:
+                print(f"[INFO] No speech detected in clip at {timestamp:.1f}s")
         
         except Exception as e:
             if "Empty queue" not in str(e):
@@ -183,7 +203,10 @@ prediction_thread = threading.Thread(target=prediction_worker, daemon=True)
 prediction_thread.start()
 
 def process_audio(audio):
-    """Main audio processing function"""
+    """
+    Main audio processing function.
+    """
+
     if audio is None:
         return "Listening...", f'Speaking: {state.current_speaker} \n ({state.current_confidence:.1%} confidence)'
 
@@ -237,39 +260,7 @@ def process_audio(audio):
             
             state.last_process_time = now
 
-        # Speech recognition
-        if len(state.buffer) >= interval_samples:
-            transcribe_audio = np.array(list(state.buffer))
-            
-            if has_speech(transcribe_audio):
-                wav_io = io.BytesIO()
-                with wave.open(wav_io, "wb") as wf:
-                    wf.setnchannels(1)
-                    wf.setsampwidth(2)
-                    wf.setframerate(state.sample_rate)
-                    wf.writeframes(transcribe_audio.tobytes())
-                wav_io.seek(0)
-
-                try:
-                    with sr.AudioFile(wav_io) as source:
-                        audio_chunk = recognizer.record(source)
-                        text = recognizer.recognize_google(audio_chunk, language="en-US").strip()
-
-                    if text:
-                        if now - state.last_update_time > state.pause_threshold:
-                            state.recent_transcript.clear()
-                        state.recent_transcript.append(text)
-                        state.last_update_time = now
-                        print(f"[TRANSCRIPT] {text}")
-                except sr.UnknownValueError:
-                    pass
-                except sr.RequestError as e:
-                    print(f"[ERROR] Speech recognition service error: {e}")
-                except Exception as e:
-                    print(f"[ERROR] Transcription error: {e}")
-
-        # Return current state
-        transcript_text = " ".join(state.recent_transcript) if state.recent_transcript else "Listening..."
+        transcript_text = "..."
         speaker_text = f"Speaking: {state.current_speaker}\n({state.current_confidence:.1%} confidence)"
         
         return transcript_text, speaker_text
@@ -278,7 +269,8 @@ def process_audio(audio):
         print(f"[ERROR] Audio processing error: {e}")
         import traceback
         traceback.print_exc()
-        transcript_text = " ".join(state.recent_transcript) if state.recent_transcript else "Listening..."
+        # transcript_text = " ".join(state.recent_transcript) if state.recent_transcript else "Listening..."
+        transcript_text = "..."
         speaker_text = f"{state.current_speaker}\nConfidence: {state.current_confidence:.1%}"
         return transcript_text, speaker_text
 
@@ -298,7 +290,7 @@ import atexit
 atexit.register(cleanup)
 
 
-# === Custom CSS ===
+# Custom CSS for Gradio UI
 css = """
 .gradio-container {
     background-color: #ffffff !important;
@@ -342,7 +334,7 @@ footer, .footer, .button-wrap.svelte-10cpz3p {
 }
 """
 
-# === Gradio UI ===
+# Gradio UI
 with gr.Blocks(
     theme=gr.themes.Default(font="serif"),
     css=css,
@@ -377,7 +369,7 @@ with gr.Blocks(
         elem_classes=["speaker-box"]
     )
 
-    # Commented out: Speech recognition (uncomment and add HuggingFace credentials in .env to use)
+    # Speech recognition (uncomment and add HuggingFace credentials in .env to use)
     # transcription_output = gr.Textbox(
     #     label="",
     #     placeholder="Live captions will appear here...",
@@ -386,7 +378,7 @@ with gr.Blocks(
     #     show_label=False
     # )
 
-    # Stream outputs (only speaker prediction now)
+    # Stream outputs
     audio_input.stream(
         fn=lambda audio: process_audio(audio)[1] if audio else f"Speaking: {state.current_speaker}\n({state.current_confidence:.1%} confidence)",
         inputs=audio_input,
@@ -396,7 +388,8 @@ with gr.Blocks(
 
 if __name__ == "__main__":
     print("[INFO] Starting Gradio demo...")
-    print(f"[INFO] Model loaded: {cfg['MODEL_DIR'] / 'lisa_knn.pkl'}")
+    # print(f"[INFO] Model loaded: {cfg['MODEL_DIR'] / 'lisa_knn.pkl'}")
+    print(f"[INFO] Model loaded: {cfg['MODEL_DIR'] / 'svc.pkl'}")
     print(f"[INFO] Processing: {CLIP_LENGTH}s clips every {PROCESSING_INTERVAL}s")
     
     demo.launch(
