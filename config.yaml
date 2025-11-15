@@ -34,11 +34,11 @@ AUDIO_FORMAT: mp3 # Only used for diarization step (currently unused)
 SAMPLE_RATE: 16000 # Sample rate to resample audio to after recording
 
 # Step 2: Clip Processing Parameters
-CLIP_LEN: 2.0 # Duration of each audio clip in seconds
-STEP: 1.0 # Step size for overlapping clips in seconds
+CLIP_LEN: 2.5 # Duration of each audio clip in seconds
+STEP: 1.25 # Step size for overlapping clips in seconds
 
 # Step 3: Filtering Parameters
-RMS_THRESHOLD: 0.004441
+RMS_THRESHOLD: 0.002487
 RANDOM_SEED: 42
 
 # Step 4: Feature Extraction Parameters
