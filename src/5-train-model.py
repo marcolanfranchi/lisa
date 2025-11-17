@@ -23,7 +23,7 @@ from sklearn.model_selection import train_test_split, cross_val_score, Stratifie
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
+from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.svm import SVC
 from config import load_config
 
@@ -125,12 +125,12 @@ def main(selected_model="all"):
         # KNN CV sweep (before final KNN training)
         # ------------------------------------------
         try:
-            console.rule("[bold magenta]KNN CV sweep (k=1..15) / folds 3,5,10[/bold magenta]")
+            console.rule("[bold magenta]KNN CV sweep (k=4..12) / folds 5,10[/bold magenta]")
             knn_results = []
-            k_values = range(1, 16)
-            fold_values = [3, 5, 10]
+            k_values = range(4, 13)
+            fold_values = [5, 10]
             for folds in fold_values:
-                console.print(f"[magenta]{folds}-fold CV for k=1..15[/magenta]")
+                console.print(f"[magenta]{folds}-fold CV for k=4..12[/magenta]")
                 for k in k_values:
                     try:
                         knn_tmp = KNeighborsClassifier(n_neighbors=k)
@@ -153,7 +153,7 @@ def main(selected_model="all"):
         # ----------------------------------------------------
         try:
             # KNN hyperparameters
-            KNN_FINAL_K = 12
+            KNN_FINAL_K = 9
 
             console.rule(f"[bold cyan]Training final KNN (k={KNN_FINAL_K})[/bold cyan]")
             
@@ -272,38 +272,6 @@ def main(selected_model="all"):
             console.print(f"[red]Error training GradientBoosting: {e}[/red]")
             console.print(traceback.format_exc())
             all_model_scores.append({"model": "gradient_boosting", "model_path": None, "test_accuracy": 0.0, "error": str(e)})
-
-    if should_train("ada_boost", selected_model):
-        # ------------------------------------------
-        # AdaBoost
-        # ------------------------------------------
-        try:
-            console.rule("[bold cyan]Training AdaBoost[/bold cyan]")
-            
-            # AdaBoost hyperparameters
-            ada_n_estimators = 200
-            ada = AdaBoostClassifier(n_estimators=ada_n_estimators, random_state=RANDOM_SEED)
-
-            cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=RANDOM_SEED)
-            start = time.time()
-            scores = cross_val_score(ada, X_train, y_train, cv=cv, scoring='accuracy', n_jobs=-1)
-            cv_mean = float(scores.mean())
-            cv_std = float(scores.std())
-            console.print(f"[yellow]AdaBoost CV acc: {cv_mean*100:.2f}% (+/- {cv_std*100:.2f}%) [/yellow]")
-
-            ada.fit(X_train, y_train)
-            dur = time.time() - start
-            y_pred = ada.predict(X_test)
-            acc = float(accuracy_score(y_test, y_pred))
-            console.print(f"[yellow]AdaBoost test acc: {acc*100:.2f}% (time: {dur:.2f}s)[/yellow]")
-            console.print(classification_report(y_test, y_pred))
-            ada_path = MODELS_DIR / "ada_boost.pkl"
-            save_model(ada, ada_path, "AdaBoost")
-            all_model_scores.append({"model": "ada_boost", "model_path": to_repo_relative(ada_path), "test_accuracy": acc, "cv_mean": cv_mean})
-        except Exception as e:
-            console.print(f"[red]Error training AdaBoost: {e}[/red]")
-            console.print(traceback.format_exc())
-            all_model_scores.append({"model": "ada_boost", "model_path": None, "test_accuracy": 0.0, "error": str(e)})
 
     if should_train("svc", selected_model):
         # ------------------------------------------
