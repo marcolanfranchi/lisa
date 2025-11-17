@@ -7,7 +7,7 @@ from streamlit_advanced_audio import audix, WaveSurferOptions
 
 def section_header(title: str, description: str) -> None:
     """Render a section header."""
-    st.header(f"*LISA: {title}*")
+    st.header(f"*lisa: {title}*")
     st.markdown(f":small[{description}]")
 
 # ==============================================================================

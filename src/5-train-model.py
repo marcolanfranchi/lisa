@@ -148,30 +148,39 @@ def main(selected_model="all"):
             console.print(f"[red]Error during KNN CV sweep: {e}[/red]")
             console.print(traceback.format_exc())
 
-        # ----------------------------------------------------
-        # Train final KNN
-        # ----------------------------------------------------
-        try:
-            # KNN hyperparameters
-            KNN_FINAL_K = 9
+    # ----------------------------------------------------
+    # Train final KNN
+    # ----------------------------------------------------
+    try:
+        # KNN hyperparameters
+        KNN_FINAL_K = 9
 
-            console.rule(f"[bold cyan]Training final KNN (k={KNN_FINAL_K})[/bold cyan]")
-            
-            knn_model = KNeighborsClassifier(n_neighbors=KNN_FINAL_K)
-            start = time.time()
-            knn_model.fit(X_train, y_train)
-            dur = time.time() - start
-            y_pred = knn_model.predict(X_test)
-            acc = float(accuracy_score(y_test, y_pred))
-            console.print(f"[yellow]KNN (k={KNN_FINAL_K}) test acc: {acc*100:.2f}% (train time: {dur:.2f}s)[/yellow]")
-            console.print(classification_report(y_test, y_pred))
-            knn_path = MODELS_DIR / f"knn_k{KNN_FINAL_K}.pkl"
-            save_model(knn_model, knn_path, "KNN")
-            all_model_scores.append({"model": f"knn_k{KNN_FINAL_K}", "model_path": to_repo_relative(knn_path), "test_accuracy": acc})
-        except Exception as e:
-            console.print(f"[red]Error training KNN: {e}[/red]")
-            console.print(traceback.format_exc())
-            all_model_scores.append({"model": f"knn_k{KNN_FINAL_K}", "model_path": None, "test_accuracy": 0.0, "error": str(e)})
+        console.rule(f"[bold cyan]Training final KNN (k={KNN_FINAL_K})[/bold cyan]")
+        
+        knn_model = KNeighborsClassifier(n_neighbors=KNN_FINAL_K)
+        
+        # CV for KNN
+        cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=RANDOM_SEED)
+        scores = cross_val_score(knn_model, X_train, y_train, cv=cv, scoring='accuracy', n_jobs=-1)
+        cv_mean = float(scores.mean())
+        cv_std = float(scores.std())
+        console.print(f"[yellow]KNN (k={KNN_FINAL_K}) CV acc: {cv_mean*100:.2f}% (+/- {cv_std*100:.2f}%) [/yellow]")
+        
+        # Fit on full training set
+        start = time.time()
+        knn_model.fit(X_train, y_train)
+        dur = time.time() - start
+        y_pred = knn_model.predict(X_test)
+        acc = float(accuracy_score(y_test, y_pred))
+        console.print(f"[yellow]KNN (k={KNN_FINAL_K}) test acc: {acc*100:.2f}% (train time: {dur:.2f}s)[/yellow]")
+        console.print(classification_report(y_test, y_pred))
+        knn_path = MODELS_DIR / f"knn_k{KNN_FINAL_K}.pkl"
+        save_model(knn_model, knn_path, "KNN")
+        all_model_scores.append({"model": f"knn_k{KNN_FINAL_K}", "model_path": to_repo_relative(knn_path), "test_accuracy": acc, "cv_mean": cv_mean})
+    except Exception as e:
+        console.print(f"[red]Error training KNN: {e}[/red]")
+        console.print(traceback.format_exc())
+        all_model_scores.append({"model": f"knn_k{KNN_FINAL_K}", "model_path": None, "test_accuracy": 0.0, "error": str(e)})
 
     if should_train("logistic", selected_model):
         # ----------------------------------------------------
@@ -304,6 +313,38 @@ def main(selected_model="all"):
             console.print(f"[red]Error training SVC: {e}[/red]")
             console.print(traceback.format_exc())
             all_model_scores.append({"model": "svc", "model_path": None, "test_accuracy": 0.0, "error": str(e)})
+
+    # ------------------------------------------
+    # Print summary table of all models
+    # ------------------------------------------
+    if all_model_scores:
+        console.rule("[bold cyan]Model Performance Summary[/bold cyan]")
+        
+        # Create a rich table
+        from rich.table import Table
+        
+        table = Table(show_header=True, header_style="bold magenta", title="All Models Test Accuracy")
+        table.add_column("Rank", style="dim", width=6)
+        table.add_column("Model", style="cyan", width=25)
+        table.add_column("Test Accuracy", justify="right", style="yellow", width=15)
+        table.add_column("CV Mean", justify="right", style="green", width=12)
+        
+        df_scores = pd.DataFrame(all_model_scores).sort_values(by="test_accuracy", ascending=False)
+        
+        for idx, row in df_scores.iterrows():
+            rank = f"#{df_scores.index.get_loc(idx) + 1}"
+            model_name = row['model']
+            test_acc = f"{row['test_accuracy']*100:.2f}%"
+            cv_mean = f"{row.get('cv_mean', 0)*100:.2f}%" if pd.notna(row.get('cv_mean')) else "N/A"
+            
+            # Highlight best model
+            if df_scores.index.get_loc(idx) == 0:
+                table.add_row(rank, f"[bold]{model_name}[/bold]", f"[bold]{test_acc}[/bold]", f"[bold]{cv_mean}[/bold]")
+            else:
+                table.add_row(rank, model_name, test_acc, cv_mean)
+        
+        console.print(table)
+        console.print()
 
     # ------------------------------------------
     # Final aggregation & summary

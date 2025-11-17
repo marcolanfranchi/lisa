@@ -172,7 +172,7 @@ def prediction_worker():
                 state.recent_predictions.append(pred_obj)
 
                 # === NEW LOGIC: only update on strong predictions ===
-                CONF_THRESHOLD = 0.25
+                CONF_THRESHOLD = 0.5
                 if confidence >= CONF_THRESHOLD:
                     state.current_speaker = prediction
                     state.current_confidence = confidence
@@ -341,14 +341,14 @@ with gr.Blocks(
     title="Live Speech + Speaker ID Demo"
 ) as demo:
     
-    webcam = gr.Image(
-        sources=["webcam"],
-        streaming=True,
-        show_label=False,
-        mirror_webcam=True,
-        height=400,
-        width=600,
-    )
+    # webcam = gr.Image(
+    #     sources=["webcam"],
+    #     streaming=True,
+    #     show_label=False,
+    #     mirror_webcam=True,
+    #     height=400,
+    #     width=600,
+    # )
 
     audio_input = gr.Audio(
         sources=["microphone"],
@@ -389,7 +389,7 @@ with gr.Blocks(
 if __name__ == "__main__":
     print("[INFO] Starting Gradio demo...")
     # print(f"[INFO] Model loaded: {cfg['MODEL_DIR'] / 'lisa_knn.pkl'}")
-    print(f"[INFO] Model loaded: {cfg['MODEL_DIR'] / 'svc.pkl'}")
+    print(f"[INFO] Model loaded: {cfg['MODEL_DIR'] / 'logistic_regression.pkl'}")
     print(f"[INFO] Processing: {CLIP_LENGTH}s clips every {PROCESSING_INTERVAL}s")
     
     demo.launch(

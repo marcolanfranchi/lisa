@@ -9,9 +9,9 @@ def home_page():
     """Display the home page with embedded Gradio demo."""
 
     # Header
-    st.header("*LISA*")
+    st.header("*lisa*")
     st.write(
-        ":small[An interactive UI for the `LISA` speaker identification model. \
+        ":small[An interactive UI for the `lisa` speaker identification model. \
         Test the model below or explore pipeline steps.]"
     )
 

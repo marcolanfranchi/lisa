@@ -10,7 +10,7 @@ from appPages.page5 import page5
 
 # Streamlit page configurations
 st.set_page_config(
-    page_title="LISA UI",
+    page_title="lisa UI",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -95,13 +95,8 @@ def main():
 
         st.divider()
         
-        st.write("Updated: :grey-badge[Sept 28, 2025]")
-        # TODO: add your name and a link below (inside the string after the comma) like this...
-        # :grey-badge[[Your Name](your-link)]
-        st.write("Developers: :grey-badge[[Marco Lanfranchi](https://github.com/marcolanfranchi)] \
-                 :grey-badge[[Dyk Kyong Do]()] \
-                 :grey-badge[[Georgii Kuzhel]()]\
-                 :grey-badge[[Vladimir Yegorin]()] ")
+        st.write("Updated: :grey-badge[Nov 16, 2025]")
+
         sac.menu(
             items=[sac.MenuItem(None, icon="github", href="https://github.com/marcolanfranchi/speaker-recognition")],
             key="link_menu",
