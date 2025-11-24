@@ -28,7 +28,7 @@ def clean_audio(input_path, output_path):
         
         # 1. noise reduction using noisereduce library
         # use the first 0.5 seconds as noise sample for stationary noise reduction
-        y_reduced = nr.reduce_noise(y=y, sr=sr, stationary=True, prop_decrease=0.8)
+        y_reduced = nr.reduce_noise(y=y, sr=sr, stationary=True, prop_decrease=0.5)
         
         # 2. normalize audio to consistent volume level
         # use librosa's util.normalize to peak normalize
@@ -36,7 +36,7 @@ def clean_audio(input_path, output_path):
         
         # 3. apply gentle high-pass filter to remove low-frequency rumble
         # remove frequencies below 80 Hz which are typically not speech
-        y_filtered = librosa.effects.preemphasis(y_normalized, coef=0.97)
+        y_filtered = librosa.effects.preemphasis(y_normalized, coef=0.90)
         
         # save cleaned audio
         sf.write(output_path, y_filtered, sr)
