@@ -30,8 +30,6 @@ def page4():
     if not cfg["FEATURES_FILE"].exists():
         st.warning(f'No features file found at `{cfg["FEATURES_FILE"]}`. \
                    Please run 4-extract-features.py.')
-
-
         return
 
     try:
@@ -44,6 +42,8 @@ def page4():
         st.warning("Feature file is empty. Please re-run 4-extract-features.py.")
         return
 
+    # drop duration columns if present
+    df = df.drop(columns=["duration"])
     numeric_cols = df.select_dtypes(include=np.number).columns.tolist()
     speaker_col = "speaker_id" if "speaker_id" in df.columns else None
 
