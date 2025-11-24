@@ -1,6 +1,6 @@
 model,model_path,test_accuracy,cv_mean
-svc,data/generated/model/svc.pkl,0.9405204460966543,0.9409396825396825
-logistic_regression,data/generated/model/logistic_regression.pkl,0.9256505576208178,0.9313904761904762
-gradient_boosting,data/generated/model/gradient_boosting.pkl,0.9256505576208178,0.9138793650793652
-random_forest,data/generated/model/random_forest.pkl,0.9107806691449815,0.9218539682539684
-knn_k9,data/generated/model/knn_k9.pkl,0.8550185873605948,0.8564063492063492
+svc,data/generated/model/svc.pkl,0.9814126394052045,0.9729142857142857
+logistic_regression,data/generated/model/logistic_regression.pkl,0.9702602230483272,0.969726984126984
+random_forest,data/generated/model/random_forest.pkl,0.9591078066914498,0.9617396825396825
+gradient_boosting,data/generated/model/gradient_boosting.pkl,0.9442379182156134,0.9426158730158729
+knn_k9,data/generated/model/knn_k9.pkl,0.9182156133828996,0.8738920634920635
