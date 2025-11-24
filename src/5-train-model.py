@@ -31,7 +31,7 @@ console = Console()
 cfg = load_config()
 
 # Constants
-MODELS_DIR = Path(cfg["MODEL_DIR"])
+MODEL_DIR = Path(cfg["MODEL_DIR"])
 DATA_DIR = Path(cfg["DATA_DIR"])
 
 FEATURES_FILE = cfg["FEATURES_FILE"]
@@ -41,7 +41,7 @@ KNN_CV_RESULTS = DATA_DIR / "knn_cv_results.csv"
 ENSEMBLE_CV_RESULTS = DATA_DIR / "model_cv_results.csv"
 ALL_SCORES_CSV = DATA_DIR / "all_model_scores.csv"
 MODEL_SUMMARY_JSON = DATA_DIR / "model_summary.json"
-SCALER_PKL = MODELS_DIR / "scaler.pkl"
+SCALER_PKL = MODEL_DIR / "scaler.pkl"
 
 # Model-agnostic parameters (these parameters can be used across
 # all models; per-model hyperparameters are set in each model block)
@@ -174,7 +174,7 @@ def main(selected_model="all"):
         acc = float(accuracy_score(y_test, y_pred))
         console.print(f"[yellow]KNN (k={KNN_FINAL_K}) test acc: {acc*100:.2f}% (train time: {dur:.2f}s)[/yellow]")
         console.print(classification_report(y_test, y_pred))
-        knn_path = MODELS_DIR / f"knn_k{KNN_FINAL_K}.pkl"
+        knn_path = MODEL_DIR / f"knn_k{KNN_FINAL_K}.pkl"
         save_model(knn_model, knn_path, "KNN")
         all_model_scores.append({"model": f"knn_k{KNN_FINAL_K}", "model_path": to_repo_relative(knn_path), "test_accuracy": acc, "cv_mean": cv_mean})
     except Exception as e:
@@ -209,7 +209,7 @@ def main(selected_model="all"):
             acc = float(accuracy_score(y_test, y_pred))
             console.print(f"[yellow]LogReg test acc: {acc*100:.2f}% (time: {dur:.2f}s)[/yellow]")
             console.print(classification_report(y_test, y_pred))
-            lr_path = MODELS_DIR / "logistic_regression.pkl"
+            lr_path = MODEL_DIR / "logistic_regression.pkl"
             save_model(logreg, lr_path, "LogisticRegression")
             all_model_scores.append({"model": "logistic_regression", "model_path": to_repo_relative(lr_path), "test_accuracy": acc, "cv_mean": cv_mean})
         except Exception as e:
@@ -242,7 +242,7 @@ def main(selected_model="all"):
             acc = float(accuracy_score(y_test, y_pred))
             console.print(f"[yellow]RandomForest test acc: {acc*100:.2f}% (time: {dur:.2f}s)[/yellow]")
             console.print(classification_report(y_test, y_pred))
-            rf_path = MODELS_DIR / "random_forest.pkl"
+            rf_path = MODEL_DIR / "random_forest.pkl"
             save_model(rf, rf_path, "RandomForest")
             all_model_scores.append({"model": "random_forest", "model_path": to_repo_relative(rf_path), "test_accuracy": acc, "cv_mean": cv_mean})
         except Exception as e:
@@ -274,7 +274,7 @@ def main(selected_model="all"):
             acc = float(accuracy_score(y_test, y_pred))
             console.print(f"[yellow]GradientBoosting test acc: {acc*100:.2f}% (time: {dur:.2f}s)[/yellow]")
             console.print(classification_report(y_test, y_pred))
-            gb_path = MODELS_DIR / "gradient_boosting.pkl"
+            gb_path = MODEL_DIR / "gradient_boosting.pkl"
             save_model(gb, gb_path, "GradientBoosting")
             all_model_scores.append({"model": "gradient_boosting", "model_path": to_repo_relative(gb_path), "test_accuracy": acc, "cv_mean": cv_mean})
         except Exception as e:
@@ -306,7 +306,7 @@ def main(selected_model="all"):
             acc = float(accuracy_score(y_test, y_pred))
             console.print(f"[yellow]SVC test acc: {acc*100:.2f}% (time: {dur:.2f}s)[/yellow]")
             console.print(classification_report(y_test, y_pred))
-            svc_path = MODELS_DIR / "svc.pkl"
+            svc_path = MODEL_DIR / "svc.pkl"
             save_model(svc, svc_path, "SVC")
             all_model_scores.append({"model": "svc", "model_path": to_repo_relative(svc_path), "test_accuracy": acc, "cv_mean": cv_mean})
         except Exception as e:
