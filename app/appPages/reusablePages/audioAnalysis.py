@@ -187,8 +187,7 @@ def show_audio_analysis_page(
     st.write("#### Audio Recordings")
     
     # Display each player row
-    with st.container(border=True):
-        audio_player_component(audio_data, wave_color=wave_color, progress_color=progress_color)
+    audio_player_component(audio_data, wave_color=wave_color, progress_color=progress_color)
 
     speakers = list(audio_data.keys())
     unique_recordings = sorted({rec for recs in audio_data.values() for rec in recs})

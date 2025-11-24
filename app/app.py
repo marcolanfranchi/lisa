@@ -85,7 +85,7 @@ def main():
     with st.sidebar:
         active_page = sac.menu(
             items=sidebar_menu(),
-            open_all=False,
+            open_all=True,
             indent=4,
             size='md',
             key="active_page",

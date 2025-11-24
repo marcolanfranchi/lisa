@@ -389,7 +389,7 @@ with gr.Blocks(
 if __name__ == "__main__":
     print("[INFO] Starting Gradio demo...")
     # print(f"[INFO] Model loaded: {cfg['MODEL_DIR'] / 'lisa_knn.pkl'}")
-    print(f"[INFO] Model loaded: {cfg['MODEL_DIR'] / 'logistic_regression.pkl'}")
+    print(f"[INFO] Model loaded: {cfg['MODEL_DIR'] / 'svc.pkl'}")
     print(f"[INFO] Processing: {CLIP_LENGTH}s clips every {PROCESSING_INTERVAL}s")
     
     demo.launch(

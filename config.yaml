@@ -38,7 +38,7 @@ CLIP_LEN: 2.5 # Duration of each audio clip in seconds
 STEP: 1.25 # Step size for overlapping clips in seconds
 
 # Step 3: Filtering Parameters
-RMS_THRESHOLD: 0.0029
+RMS_THRESHOLD: 0.004039
 RANDOM_SEED: 42
 
 # Step 4: Feature Extraction Parameters

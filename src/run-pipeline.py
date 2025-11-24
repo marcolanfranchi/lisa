@@ -55,7 +55,7 @@ def main():
     console.rule("[bold red]Step 5/5: Train Model")
     step5.main()
     
-    console.rule("[bold green]Pipeline completed successfully!")
+    console.rule("[bold green]Pipeline completed successfully")
     
 
 if __name__ == "__main__":
