@@ -6,7 +6,7 @@ An end-to-end supervised machine learning pipeline that produces a model capable
 
 ### System Diagram
 
-![System Diagram](images/diagramTransparentDarkBG.png)
+![System Diagram](images/lisa-diagram-light.png)
 
 ### Project Structure
 
