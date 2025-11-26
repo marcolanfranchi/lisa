@@ -95,6 +95,9 @@ def create_audio_statistics_chart(audio_data, chart_type="rms"):
             color='Speaker',
             color_discrete_map=color_map
         )
+        # Fix y-axis range
+        fig.update_yaxes(range=[0, 0.05])
+        
     elif chart_type == "spectral":
         st.write("The **mean spectral centroid** in audio samples is a measure of the 'center of gravity' of a signal's \
                  magnitude spectrum, indicating the average frequency where most of its energy is concentrated. It is \
@@ -251,4 +254,3 @@ def show_audio_analysis_page(
             })
 
     st.dataframe(pd.DataFrame(summary_data), hide_index=True)
-
