@@ -26,7 +26,7 @@ step4 = importlib.import_module("src.4-extract-features")
 cfg = load_config()
 
 # Load trained model and scaler
-with open(cfg["MODEL_DIR"] / "gradient_boosting.pkl", "rb") as f:
+with open(cfg["MODEL_DIR"] / "svc.pkl", "rb") as f:
     model = pickle.load(f)
 with open(cfg["MODEL_DIR"] / "scaler.pkl", "rb") as f:
     scaler = pickle.load(f)

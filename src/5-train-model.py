@@ -7,6 +7,7 @@ Saves:
  - data/knn_cv_results.csv
  - data/all_model_scores.csv (test accuracies)
  - data/model_summary.json (best model summary)
+ - figures/confusion_matrix_best_model.png (confusion matrix for best model)
 """
 
 import json
@@ -17,10 +18,12 @@ from pathlib import Path
 from datetime import datetime
 import argparse
 import pandas as pd
+import numpy as np
 from rich.console import Console
+from rich.table import Table
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
@@ -78,6 +81,54 @@ def to_repo_relative(path: Path) -> str:
     except Exception:
         # fallback: just return the name
         return str(path.name)
+
+def print_confusion_matrix(y_true, y_pred, labels, title="Confusion Matrix"):
+    """
+    Print a confusion matrix in the terminal using rich tables.
+    
+    Args:
+        y_true: True labels
+        y_pred: Predicted labels
+        labels: List of label names (speaker IDs)
+        title: Table title
+    """
+    cm = confusion_matrix(y_true, y_pred, labels=labels)
+    
+    # Create rich table
+    table = Table(title=title, show_header=True, header_style="bold magenta")
+    
+    # Add header row (first column is "True/Pred", then predicted labels)
+    table.add_column("True \\ Pred", style="cyan", justify="right")
+    for label in labels:
+        table.add_column(str(label), justify="center", style="yellow")
+    
+    # Add data rows
+    for i, label in enumerate(labels):
+        row = [str(label)]
+        for j in range(len(labels)):
+            # Highlight diagonal (correct predictions) in green
+            if i == j:
+                row.append(f"[bold green]{cm[i][j]}[/bold green]")
+            else:
+                # Show misclassifications in red if non-zero
+                if cm[i][j] > 0:
+                    row.append(f"[red]{cm[i][j]}[/red]")
+                else:
+                    row.append(str(cm[i][j]))
+        table.add_row(*row)
+    
+    console.print()
+    console.print(table)
+    console.print()
+    
+    # Print summary statistics
+    total_samples = cm.sum()
+    correct_predictions = np.trace(cm)
+    console.print(f"[cyan]Total samples: {total_samples}[/cyan]")
+    console.print(f"[green]Correct predictions: {correct_predictions} ({correct_predictions/total_samples*100:.2f}%)[/green]")
+    console.print(f"[red]Incorrect predictions: {total_samples - correct_predictions} ({(total_samples - correct_predictions)/total_samples*100:.2f}%)[/red]")
+    console.print()
+
     
 
 # Model Training Steps
@@ -102,6 +153,10 @@ def main(selected_model="all"):
     y = df['speaker_id'].values
     console.print(f"[cyan]Loaded dataset: {X.shape[0]} samples, {X.shape[1]} features[/cyan]")
 
+    # Get unique labels for confusion matrix
+    unique_labels = sorted(np.unique(y))
+    console.print(f"[cyan]Number of classes: {len(unique_labels)}[/cyan]")
+
     # Scale X features
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(X)
@@ -117,8 +172,9 @@ def main(selected_model="all"):
     )
     console.print(f"[cyan]Train/test split: train={len(X_train)}, test={len(X_test)}[/cyan]")
 
-    # Container for final test results
+    # Container for final test results and predictions
     all_model_scores = []
+    model_predictions = {}  # Store predictions for each model
 
     if should_train("knn", selected_model):
         # ------------------------------------------
@@ -174,9 +230,21 @@ def main(selected_model="all"):
         acc = float(accuracy_score(y_test, y_pred))
         console.print(f"[yellow]KNN (k={KNN_FINAL_K}) test acc: {acc*100:.2f}% (train time: {dur:.2f}s)[/yellow]")
         console.print(classification_report(y_test, y_pred))
+        
+        # Print confusion matrix
+        print_confusion_matrix(
+            y_test,
+            y_pred,
+            labels=unique_labels,
+            title=f"KNN (k={KNN_FINAL_K}) Confusion Matrix - Test Accuracy: {acc*100:.2f}%"
+        )
+        
         knn_path = MODEL_DIR / f"knn_k{KNN_FINAL_K}.pkl"
         save_model(knn_model, knn_path, "KNN")
-        all_model_scores.append({"model": f"knn_k{KNN_FINAL_K}", "model_path": to_repo_relative(knn_path), "test_accuracy": acc, "cv_mean": cv_mean})
+        
+        model_name = f"knn_k{KNN_FINAL_K}"
+        all_model_scores.append({"model": model_name, "model_path": to_repo_relative(knn_path), "test_accuracy": acc, "cv_mean": cv_mean})
+        model_predictions[model_name] = y_pred
     except Exception as e:
         console.print(f"[red]Error training KNN: {e}[/red]")
         console.print(traceback.format_exc())
@@ -209,9 +277,21 @@ def main(selected_model="all"):
             acc = float(accuracy_score(y_test, y_pred))
             console.print(f"[yellow]LogReg test acc: {acc*100:.2f}% (time: {dur:.2f}s)[/yellow]")
             console.print(classification_report(y_test, y_pred))
+            
+            # Print confusion matrix
+            print_confusion_matrix(
+                y_test,
+                y_pred,
+                labels=unique_labels,
+                title=f"Logistic Regression Confusion Matrix - Test Accuracy: {acc*100:.2f}%"
+            )
+            
             lr_path = MODEL_DIR / "logistic_regression.pkl"
             save_model(logreg, lr_path, "LogisticRegression")
-            all_model_scores.append({"model": "logistic_regression", "model_path": to_repo_relative(lr_path), "test_accuracy": acc, "cv_mean": cv_mean})
+            
+            model_name = "logistic_regression"
+            all_model_scores.append({"model": model_name, "model_path": to_repo_relative(lr_path), "test_accuracy": acc, "cv_mean": cv_mean})
+            model_predictions[model_name] = y_pred
         except Exception as e:
             console.print(f"[red]Error training Logistic Regression: {e}[/red]")
             console.print(traceback.format_exc())
@@ -242,9 +322,21 @@ def main(selected_model="all"):
             acc = float(accuracy_score(y_test, y_pred))
             console.print(f"[yellow]RandomForest test acc: {acc*100:.2f}% (time: {dur:.2f}s)[/yellow]")
             console.print(classification_report(y_test, y_pred))
+            
+            # Print confusion matrix
+            print_confusion_matrix(
+                y_test,
+                y_pred,
+                labels=unique_labels,
+                title=f"Random Forest Confusion Matrix - Test Accuracy: {acc*100:.2f}%"
+            )
+            
             rf_path = MODEL_DIR / "random_forest.pkl"
             save_model(rf, rf_path, "RandomForest")
-            all_model_scores.append({"model": "random_forest", "model_path": to_repo_relative(rf_path), "test_accuracy": acc, "cv_mean": cv_mean})
+            
+            model_name = "random_forest"
+            all_model_scores.append({"model": model_name, "model_path": to_repo_relative(rf_path), "test_accuracy": acc, "cv_mean": cv_mean})
+            model_predictions[model_name] = y_pred
         except Exception as e:
             console.print(f"[red]Error training RandomForest: {e}[/red]")
             console.print(traceback.format_exc())
@@ -274,9 +366,21 @@ def main(selected_model="all"):
             acc = float(accuracy_score(y_test, y_pred))
             console.print(f"[yellow]GradientBoosting test acc: {acc*100:.2f}% (time: {dur:.2f}s)[/yellow]")
             console.print(classification_report(y_test, y_pred))
+            
+            # Print confusion matrix
+            print_confusion_matrix(
+                y_test,
+                y_pred,
+                labels=unique_labels,
+                title=f"Gradient Boosting Confusion Matrix - Test Accuracy: {acc*100:.2f}%"
+            )
+            
             gb_path = MODEL_DIR / "gradient_boosting.pkl"
             save_model(gb, gb_path, "GradientBoosting")
-            all_model_scores.append({"model": "gradient_boosting", "model_path": to_repo_relative(gb_path), "test_accuracy": acc, "cv_mean": cv_mean})
+            
+            model_name = "gradient_boosting"
+            all_model_scores.append({"model": model_name, "model_path": to_repo_relative(gb_path), "test_accuracy": acc, "cv_mean": cv_mean})
+            model_predictions[model_name] = y_pred
         except Exception as e:
             console.print(f"[red]Error training GradientBoosting: {e}[/red]")
             console.print(traceback.format_exc())
@@ -306,9 +410,21 @@ def main(selected_model="all"):
             acc = float(accuracy_score(y_test, y_pred))
             console.print(f"[yellow]SVC test acc: {acc*100:.2f}% (time: {dur:.2f}s)[/yellow]")
             console.print(classification_report(y_test, y_pred))
+            
+            # Print confusion matrix
+            print_confusion_matrix(
+                y_test,
+                y_pred,
+                labels=unique_labels,
+                title=f"SVC Confusion Matrix - Test Accuracy: {acc*100:.2f}%"
+            )
+            
             svc_path = MODEL_DIR / "svc.pkl"
             save_model(svc, svc_path, "SVC")
-            all_model_scores.append({"model": "svc", "model_path": to_repo_relative(svc_path), "test_accuracy": acc, "cv_mean": cv_mean})
+            
+            model_name = "svc"
+            all_model_scores.append({"model": model_name, "model_path": to_repo_relative(svc_path), "test_accuracy": acc, "cv_mean": cv_mean})
+            model_predictions[model_name] = y_pred
         except Exception as e:
             console.print(f"[red]Error training SVC: {e}[/red]")
             console.print(traceback.format_exc())
@@ -321,8 +437,6 @@ def main(selected_model="all"):
         console.rule("[bold cyan]Model Performance Summary[/bold cyan]")
         
         # Create a rich table
-        from rich.table import Table
-        
         table = Table(show_header=True, header_style="bold magenta", title="All Models Test Accuracy")
         table.add_column("Rank", style="dim", width=6)
         table.add_column("Model", style="cyan", width=25)
@@ -374,6 +488,7 @@ def main(selected_model="all"):
             "timestamp_utc": timestamp,
             "num_samples": int(X.shape[0]),
             "num_features": int(X.shape[1]),
+            "num_classes": len(unique_labels),
             "models_evaluated": df_scores['model'].tolist()
         }
         with open(MODEL_SUMMARY_JSON, 'w') as f:

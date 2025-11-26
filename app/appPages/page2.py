@@ -318,7 +318,8 @@ def create_balance_analysis_chart(impact_df):
     # Add line showing minimum for balancing
     min_clips = impact_df['Kept Clips'].min()
     fig.add_hline(y=min_clips, line_dash="dash", line_color="black",
-                 annotation_text=f"Balance Target: {min_clips} clips per speaker")
+                 annotation_text=f"{min_clips} clips",
+                 annotation_position="top left")
     
     fig.update_layout(
         title='Data Balance After Filtering',
