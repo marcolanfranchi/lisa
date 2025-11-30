@@ -8,7 +8,8 @@ from appPages.components import section_header, blank_lines
 from config import load_config
 
 cfg = load_config()
-DATA_DIR = Path(cfg["DATA_DIR"])
+MODEL_DIR = Path(cfg["MODEL_DIR"])
+EVAL_DIR = MODEL_DIR / "evaluation"
 
 
 def page5():
@@ -27,9 +28,9 @@ def page5():
     # ==============================================================================
     # Load Model Summary
     # ==============================================================================
-    model_summary_path = DATA_DIR / "model_summary.json"
-    all_scores_path = DATA_DIR / "all_model_scores.csv"
-    knn_cv_path = DATA_DIR / "knn_cv_results.csv"
+    model_summary_path = EVAL_DIR / "model_summary.json"
+    all_scores_path = EVAL_DIR / "all_model_scores.csv"
+    knn_cv_path = EVAL_DIR / "knn_cv_results.csv"
 
     if not model_summary_path.exists():
         st.warning(

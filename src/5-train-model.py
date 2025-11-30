@@ -2,12 +2,11 @@
 """
 Step-by-step training script for multiple types of models.
 Saves:
- - models/*.pkl (one .pkl per model)
- - models/scaler.pkl
- - data/knn_cv_results.csv
- - data/all_model_scores.csv (test accuracies)
- - data/model_summary.json (best model summary)
- - figures/confusion_matrix_best_model.png (confusion matrix for best model)
+ - model/*.pkl (one .pkl per model)
+ - model/scaler.pkl (feature scaler)
+ - model/evaluation/knn_cv_results.csv
+ - model/evaluation/all_model_scores.csv (test accuracies)
+ - model/evaluation/model_summary.json (best model summary)
 """
 
 import json
@@ -35,19 +34,19 @@ cfg = load_config()
 
 # Constants
 MODEL_DIR = Path(cfg["MODEL_DIR"])
-DATA_DIR = Path(cfg["DATA_DIR"])
+EVAL_DIR = MODEL_DIR / "evaluation"
 
 FEATURES_FILE = cfg["FEATURES_FILE"]
 RANDOM_SEED = cfg.get("RANDOM_SEED", 42)
 
-KNN_CV_RESULTS = DATA_DIR / "knn_cv_results.csv"
-ENSEMBLE_CV_RESULTS = DATA_DIR / "model_cv_results.csv"
-ALL_SCORES_CSV = DATA_DIR / "all_model_scores.csv"
-MODEL_SUMMARY_JSON = DATA_DIR / "model_summary.json"
+KNN_CV_RESULTS = EVAL_DIR / "knn_cv_results.csv"
+ALL_SCORES_CSV = EVAL_DIR / "all_model_scores.csv"
+MODEL_SUMMARY_JSON = EVAL_DIR / "model_summary.json"
 SCALER_PKL = MODEL_DIR / "scaler.pkl"
 
 # Model-agnostic parameters (these parameters can be used across
-# all models; per-model hyperparameters are set in each model block)
+# all models, unlike model-specific hyperparameters defined later)
+
 TEST_SIZE = 0.30 # Train/test split size
 
 # Helper Functions

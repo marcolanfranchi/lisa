@@ -1,6 +1,0 @@
-model,model_path,test_accuracy,cv_mean
-svc,data/generated/model/svc.pkl,0.9851301115241635,0.9777015873015873
-logistic_regression,data/generated/model/logistic_regression.pkl,0.9776951672862454,0.9761015873015874
-random_forest,data/generated/model/random_forest.pkl,0.9442379182156134,0.9601269841269839
-gradient_boosting,data/generated/model/gradient_boosting.pkl,0.9405204460966543,0.9458285714285715
-knn_k9,data/generated/model/knn_k9.pkl,0.8810408921933085,0.8836063492063492
