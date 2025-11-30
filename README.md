@@ -11,47 +11,41 @@ An end-to-end supervised machine learning pipeline that produces a model capable
 ### Project Structure
 
 ```
-speaker-recognition/
+lisa/
 │
-├── app/                        # Streamlit app containing model demo + data visualizations
-│ └── appPages/                 # ...
-│   └── reusablePages/          # ...
-│   └── components.py           # ...
-│   └── homePage.py             # ...
-│   └── page0.py                # ...
-│   └── page<page_number>.py    # ...
-│ └── app.py                    # ...
-│ └── config.py                 # ...
-│ └── demo.py                   # ...
-│ └── utils.py                  # ...
+├── app/                        # Local app with visualizations and model deployment
+│ └── app.py                    # Multi-page Streamlit UI detailing pipeline methodology with visualizations
+│ └── demo.py                   # Gradio demo that processes live mic input and feeds it to the model via stream processing
 |
 ├── data/                       # Data
 │ └── generated/                # Generated dataset of voice recordings
-│   └── raw_recordings/         # Folders for each speaker with raw recordings
-│   └── cleaned_recordings/     # Folders for each speaker with cleaned recordings
-│   └── processed_clips/        # Folders for each speaker with split audio clips
+│   ├── raw_recordings/         # Folders for each speaker with raw recordings
+│   ├── cleaned_recordings/     # Folders for each speaker with cleaned recordings
+│   ├── processed_clips/        # Folders for each speaker with split fixed-length audio clips
+│   ├── filtered_balanced_clips/    # Folders for each speaker with filtered audio clips, balanced by undersampling
+│   └── model/                  # Saved model assets and evaluation outputs
+│       ├── evaluation/         # Model evaluation metrics and metadata
+│       ├── random_forest.pkl   # Serialized Random Forest model
+│       ├── <...>.pkl           # Serialized versions of all other trained models
+│       └── scaler.pkl          # Saved feature scaler for preprocessing
 │   └── manifest.csv            # Table describing the dataset files
-│ └── recording-prompts.json    # Voice recording instructions
+│   └── vocal_features.csv      # Extracted features CSV
+│ └── recording-prompts.json    # Voice recording instructions and reading content
 │
-├── models/                     # Stored model .pkl files
-│ └── lisa_knn.pkl              # ...
-│ └── ...                       # ...
-│ └── ...                       # ...
-│ └── ...                       # ...
-|
-├── src/                        # Source code
-│ └── 0-get-data.py             # Starts the data generation process
-│ └── 1-clean-audio.py          # Cleans raw audio (mp3/wav)
-│ └── 2-split-clips.py          # ...
-│ └── 3-filter-and-balance.py   # ...
-│ └── 4-extract-features.py     # ...
-│ └── config.py                 # ...
-│ └── run-pipeline.py           # ...
+├── src/                        # ML pipeline source code
+│ ├── 0-get-data.py             # Starts the data generation process
+│ ├── 1-clean-audio.py          # Cleans raw audio by normalizing levels and reducing background noise
+│ ├── 2-split-clips.py          # Splits cleaned audio into fixed-length clips
+│ ├── 3-filter-and-balance.py   # Applies filtering and balances classes through undersampling
+│ ├── 4-extract-features.py     # Extracts MFCC means and deltas (acoustic features)
+│ ├── config.py                 # Centralized configuration settings
+│ └── run-pipeline.py           # Executes the full pipeline assuming audio is already collected (Steps 1-6)
 │
-├── config.yaml
+├── config.yaml                 # YAML configuration for paths and parameters
 ├── README.md
 ├── requirements.txt
 └── .gitignore
+
 ```
 
 ## Getting Started
@@ -59,17 +53,20 @@ speaker-recognition/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/marcolanfranchi/speaker-recognition.git
-cd speaker-recognition
+git clone https://github.com/marcolanfranchi/lisa.git
+cd lisa
 ```
 
-### 2. Create and activate environment
-MAC
+### 2. Create and activate a virtual environment
+
+On MacOS:
+
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 ```
-WINDOWS
+On Windows:
+
 ```bash
 python3 -m venv venv
 venv\Scripts\Activate.ps1
@@ -83,9 +80,19 @@ pip install -r requirements.txt
 
 ## Data Pipeline
 
+### Before we Look at Each Step
+
+If you already have your raw audio recordings generated or downloaded, you can run the entire pipeline (including model training) with a single command. The command below requires that there are multiple folders in `data/generated/raw_recordings` with at least one .wav file of speech audio per folder. Each folder represents a speaker class that will be in the final model.
+
+```bash
+python3 src/run-pipeline.py
+```
+
+If you would like to run the pipeline steps individually, whether including audio collection (step 0) or not, follow the steps below that detail how to run each script and what it does.
+
 ### 0. Generate your audio data 
 
-This step should be performed for 3–5 people to build a multi-speaker dataset.
+This step must be performed for 2 or more people to build a multi-speaker dataset.
 
 ```bash
 python3 src/0-get-data.py
