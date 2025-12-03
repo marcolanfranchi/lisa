@@ -166,7 +166,7 @@ We made a streamlit UI and a gradio component to demonstrate our model in real t
 ### Run the Streamlit App
 
 ```bash
-python3 app/app.py
+streamlit run app/app.py
 ```
 This will run the Streamlit interface at [http://localhost:8501](http://localhost:8501).
 
