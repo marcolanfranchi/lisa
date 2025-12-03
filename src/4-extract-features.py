@@ -1,4 +1,4 @@
-# src/4-extract-features-simple.py
+# src/4-extract-features.py
 import librosa
 import numpy as np
 import pandas as pd
@@ -68,6 +68,16 @@ def main():
     df = pd.DataFrame(all_features)
     cfg["FEATURES_FILE"].parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(cfg["FEATURES_FILE"], index=False)
+
+    # print first 5 columns and 3 other columns (speaker_id,clip_filename,duration) 
+    # and first 8 rows as a sample with columns names
+
+    console.print("\n")
+    console.print("[bold green]Sample of extracted features:[/bold green]")
+    console.print("\n")
+    sample_cols = list(df.columns[:5]) + ["speaker_id", "clip_filename", "duration"]
+    console.print(df[sample_cols].head(8))
+    console.print("\n")
 
     console.print(f'[green]Saved {len(df)} samples with {df.shape[1]} features to {cfg["FEATURES_FILE"]}[/green]')
 

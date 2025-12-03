@@ -244,7 +244,7 @@ def main():
         console.print(f'[bold green]balanced manifest saved: {cfg["BALANCED_MANIFEST_FILE"]}[/bold green]')
     
     # final summary
-    console.rule("[bold green]filtering and balancing complete![/bold green]")
+    console.rule("[bold green]filtering and balancing complete[/bold green]")
     
     total_speakers = len(balanced_clips)
     clips_per_speaker = len(next(iter(balanced_clips.values()))) if balanced_clips else 0

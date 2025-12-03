@@ -4,7 +4,6 @@
 # -------------------------------------------------------------------------
 
 import gradio as gr
-import speech_recognition as sr
 import numpy as np
 import io
 import sys
@@ -30,11 +29,6 @@ with open(cfg["MODEL_DIR"] / "svc.pkl", "rb") as f:
     model = pickle.load(f)
 with open(cfg["MODEL_DIR"] / "scaler.pkl", "rb") as f:
     scaler = pickle.load(f)
-
-# Speech recognizer
-recognizer = sr.Recognizer()
-recognizer.energy_threshold = 300
-recognizer.dynamic_energy_threshold = True
 
 # Global state class to avoid variable issues
 class AudioProcessingState:

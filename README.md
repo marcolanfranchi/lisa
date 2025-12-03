@@ -59,7 +59,7 @@ cd lisa
 
 ### 2. Create and activate a virtual environment
 
-On MacOS:
+On MacOS and Linux:
 
 ```bash
 python3 -m venv venv
@@ -82,7 +82,7 @@ pip install -r requirements.txt
 
 ### Before we Look at Each Step
 
-If you already have your raw audio recordings generated or downloaded, you can run the entire pipeline (including model training) with a single command. The command below requires that there are multiple folders in `data/generated/raw_recordings` with at least one .wav file of speech audio per folder. Each folder represents a speaker class that will be in the final model.
+If you already have your raw audio recordings generated or downloaded, you can run the entire pipeline (including model training) with a single command. The command below requires that there are multiple folders in `data/generated/raw_recordings/` with at least one .wav file of speech audio per folder. Each folder represents a speaker class that will be in the final model.
 
 ```bash
 python3 src/run-pipeline.py
@@ -97,7 +97,7 @@ This step must be performed for 2 or more people to build a multi-speaker datase
 ```bash
 python3 src/0-get-data.py
 ```
-<details>
+<!-- <details>
 <summary>What this script does:</summary>
 - Prompts the user with recording instructions loaded from a JSON file.
 - Records 60-second audio sessions with countdown and progress bar feedback.
@@ -105,7 +105,7 @@ python3 src/0-get-data.py
 - Saves processed clips with unique IDs in a structured folder (processed_clips/speaker_id/).
 - Generates a manifest CSV containing metadata (clip paths, speaker ID, script ID, timestamps).
 - Generated dataset of audio recordings gets placed into `data/generated/`.
-</details>
+</details> -->
 
 
 ### 1. Clean/normalize audio levels
@@ -113,39 +113,39 @@ python3 src/0-get-data.py
 ```bash
 python3 src/1-clean-audio
 ```
-<details> <summary>What this script does</summary>
+<!-- <details> <summary>What this script does</summary>
 - Normalizes volume levels across clips.
 - Removes excessive background noise.
 - Outputs cleaned audio recordings to data/generated/cleaned_recordings/.
-</details>
+</details> -->
 
 
 ### 2. Split Audio Clips
 ```bash
 python3 src/2-split-clips
 ```
-<details> <summary>What this script does</summary>
+<!-- <details> <summary>What this script does</summary>
 - Splits audio clips into fixed length clips with 50% overlap per clip.
 - Outputs cleaned audio recordings to data/generated/processed_clips/.
-</details>
+</details> -->
 
 
 ### 3. Filter & Balance Audio Clips
 ```bash
 python3 src/3-filter-and-balance
 ```
-<details> <summary>What this script does</summary>
+<!-- <details> <summary>What this script does</summary>
 - ...
-</details>
+</details> -->
 
 
 ### 4. Extract Features
 ```bash
 python3 src/4-extract-features
 ```
-<details> <summary>What this script does</summary>
+<!-- <details> <summary>What this script does</summary>
 - ...
-</details>
+</details> -->
 
 
 
@@ -153,9 +153,9 @@ python3 src/4-extract-features
 ```bash
 python3 src/5-train-model
 ```
-<details> <summary>What this script does</summary>
+<!-- <details> <summary>What this script does</summary>
 - ...
-</details>
+</details> -->
 
 
 
@@ -168,11 +168,11 @@ We made a streamlit UI and a gradio component to demonstrate our model in real t
 ```bash
 python3 app/app.py
 ```
-This will run the main Streamlit/Python interface at [http://localhost:8501](http://localhost:8501).
+This will run the Streamlit interface at [http://localhost:8501](http://localhost:8501).
 
 ### Run the Model Demo
 
 ```bash
 python3 app/demo.py
 ```
-This will run the Gradio/Python model demo (at [http://localhost:7860](http://localhost:7860)), which will be displayed in the home page of the Streamlit app as an embedded frame.
+This will run the Gradio model demo (at [http://localhost:7860](http://localhost:7860)), which will be displayed in the home page of the Streamlit app as an embedded frame when both are running.

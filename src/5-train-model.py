@@ -34,7 +34,10 @@ cfg = load_config()
 
 # Constants
 MODEL_DIR = Path(cfg["MODEL_DIR"])
+MODEL_DIR.mkdir(parents=True, exist_ok=True)
+
 EVAL_DIR = MODEL_DIR / "evaluation"
+EVAL_DIR.mkdir(parents=True, exist_ok=True)
 
 FEATURES_FILE = cfg["FEATURES_FILE"]
 RANDOM_SEED = cfg.get("RANDOM_SEED", 42)
@@ -180,12 +183,12 @@ def main(selected_model="all"):
         # KNN CV sweep (before final KNN training)
         # ------------------------------------------
         try:
-            console.rule("[bold magenta]KNN CV sweep (k=4..12) / folds 5,10[/bold magenta]")
+            console.rule("[bold magenta]KNN CV sweep (k=1..20) / folds 5,10[/bold magenta]")
             knn_results = []
-            k_values = range(4, 13)
+            k_values = range(1, 20)
             fold_values = [5, 10]
             for folds in fold_values:
-                console.print(f"[magenta]{folds}-fold CV for k=4..12[/magenta]")
+                console.print(f"[magenta]{folds}-fold CV for k=1..20[/magenta]")
                 for k in k_values:
                     try:
                         knn_tmp = KNeighborsClassifier(n_neighbors=k)
