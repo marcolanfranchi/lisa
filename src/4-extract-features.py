@@ -69,9 +69,6 @@ def main():
     cfg["FEATURES_FILE"].parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(cfg["FEATURES_FILE"], index=False)
 
-    # print first 5 columns and 3 other columns (speaker_id,clip_filename,duration) 
-    # and first 8 rows as a sample with columns names
-
     console.print("\n")
     console.print("[bold green]Sample of extracted features:[/bold green]")
     console.print("\n")

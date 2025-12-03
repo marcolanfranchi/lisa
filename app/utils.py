@@ -7,8 +7,6 @@ import librosa
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
 from config import load_config
 
-CACHE_TTL = 60*10  # seconds
-
 # Speaker colours for visualizations
 SPEAKER_COLOURS = {
     "marco": "#865bae",   # Purple
@@ -76,7 +74,7 @@ def get_audio_metadata(from_step=0):
     return raw_data_counts
 
 
-@st.cache_data(show_spinner=False, ttl=CACHE_TTL)
+@st.cache_data(show_spinner=False, ttl=600) # cache for 10 minutes
 def load_audio_data(data_path):
     """Load audio files and extract metadata - shared between steps"""
     audio_data = {} 

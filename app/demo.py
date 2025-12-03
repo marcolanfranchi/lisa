@@ -5,12 +5,11 @@
 
 import gradio as gr
 import numpy as np
-import io
 import sys
 import wave
 import time
 import pickle
-from collections import deque, Counter
+from collections import deque
 from pathlib import Path
 import importlib
 import threading
@@ -177,7 +176,7 @@ def prediction_worker():
                     f"Raw: {prediction} ({confidence:.2%}) | "
                     f"Displayed: {state.current_speaker} ({state.current_confidence:.2%})")
                 
-                # # state.current_speaker, state.current_confidence = get_smoothed_prediction() TODO: add back smoothing after testing
+                # state.current_speaker, state.current_confidence = get_smoothed_prediction() # add back smoothing if wanted
                 # state.current_speaker = prediction
                 # state.current_confidence = confidence
                 
@@ -284,7 +283,7 @@ import atexit
 atexit.register(cleanup)
 
 
-# Custom CSS for Gradio UI
+# Custom CSS for Gradio UI (mostly hiding components we don't want)
 css = """
 .gradio-container {
     background-color: #ffffff !important;
@@ -335,6 +334,7 @@ with gr.Blocks(
     title="Live Speech + Speaker ID Demo"
 ) as demo:
     
+    # View webcam during demo (optional)
     # webcam = gr.Image(
     #     sources=["webcam"],
     #     streaming=True,

@@ -78,9 +78,7 @@ def display_page(page_name: str):
 
 
 def main():
-    
-    # st.logo("app/images/ascii-art.png", size='large')
-    
+        
     # Sidebar Menu
     with st.sidebar:
         active_page = sac.menu(

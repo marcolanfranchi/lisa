@@ -78,9 +78,9 @@ venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
 
-## Data Pipeline
+## Running the ML Pipeline
 
-### Before we Look at Each Step
+### Before we look at each step
 
 If you already have your raw audio recordings generated or downloaded, you can run the entire pipeline (including model training) with a single command. The command below requires that there are multiple folders in `data/generated/raw_recordings/` with at least one .wav file of speech audio per folder. Each folder represents a speaker class that will be in the final model.
 
@@ -111,7 +111,7 @@ python3 src/0-get-data.py
 ### 1. Clean/normalize audio levels
 
 ```bash
-python3 src/1-clean-audio
+python3 src/1-clean-audio.py
 ```
 <!-- <details> <summary>What this script does</summary>
 - Normalizes volume levels across clips.
@@ -122,7 +122,7 @@ python3 src/1-clean-audio
 
 ### 2. Split Audio Clips
 ```bash
-python3 src/2-split-clips
+python3 src/2-split-clips.py
 ```
 <!-- <details> <summary>What this script does</summary>
 - Splits audio clips into fixed length clips with 50% overlap per clip.
@@ -132,7 +132,7 @@ python3 src/2-split-clips
 
 ### 3. Filter & Balance Audio Clips
 ```bash
-python3 src/3-filter-and-balance
+python3 src/3-filter-and-balance.py
 ```
 <!-- <details> <summary>What this script does</summary>
 - ...
@@ -141,7 +141,7 @@ python3 src/3-filter-and-balance
 
 ### 4. Extract Features
 ```bash
-python3 src/4-extract-features
+python3 src/4-extract-features.py
 ```
 <!-- <details> <summary>What this script does</summary>
 - ...
@@ -151,7 +151,7 @@ python3 src/4-extract-features
 
 ### 5. Train Model
 ```bash
-python3 src/5-train-model
+python3 src/5-train-model.py
 ```
 <!-- <details> <summary>What this script does</summary>
 - ...

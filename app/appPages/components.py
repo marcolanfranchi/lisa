@@ -1,26 +1,12 @@
 import streamlit as st
 from streamlit_advanced_audio import audix, WaveSurferOptions
 
-# ==============================================================================
-# Headers/Text components
-# ==============================================================================
 
 def section_header(title: str, description: str) -> None:
     """Render a section header."""
     st.header(f"*lisa: {title}*")
     st.markdown(f":small[{description}]")
 
-# ==============================================================================
-# Metrics components
-# ==============================================================================
-
-# def metrics_component(
-#    ...
-#   ):
-
-# ==============================================================================
-# Audio components
-# ==============================================================================
 
 def audio_player_component(
     audio_data: dict,
@@ -74,10 +60,7 @@ def audio_player_component(
             st.audio(data["path"])
 
 
-# ==============================================================================
-# Blank spacing function
-# ==============================================================================
 def blank_lines(n=1):
-    """Insert blank lines for vertical spacing. Default is 1 line."""
+    """Insert blank lines for vertical spacing in Streamlit. Default is 1 line."""
     for _ in range(n):
         st.write("")

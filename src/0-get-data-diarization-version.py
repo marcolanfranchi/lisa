@@ -1,4 +1,4 @@
-# 0-get-data.py
+# 0-get-data-diarization-version.py (currently unused)
 import os
 import json
 import dotenv
@@ -18,7 +18,6 @@ dotenv.load_dotenv()
 
 #load config.yaml
 cfg = load_config()
-
 
 # load HuggingFace token
 HF_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
