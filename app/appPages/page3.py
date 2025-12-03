@@ -25,7 +25,6 @@ def page3():
     # ==============================================================================
     # Load Balanced Data
     # ==============================================================================
-    st.write(cfg["BALANCED_CLIPS_DIR"])
     audio_data = load_audio_data(cfg["BALANCED_CLIPS_DIR"])
     manifest_df = pd.read_csv(cfg["BALANCED_MANIFEST_FILE"]) if os.path.exists(cfg["BALANCED_MANIFEST_FILE"]) else None
 
