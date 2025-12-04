@@ -50,6 +50,17 @@ lisa/
 
 ## Getting Started
 
+### 0. Linux Prerequisities
+
+If you are running the project on Linux, you must install the library PortAudio before installing the Python dependencies. This is required for the `sounddevice` package to work correctly.
+
+For Ubuntu/Debian-based systems:
+
+```bash
+sudo apt update
+sudo apt install portaudio19-dev python3-pyaudio
+```
+
 ### 1. Clone the repository
 
 ```bash
